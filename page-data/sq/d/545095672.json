@@ -1,0 +1,1 @@
+{"data":{"site":{"siteMetadata":{"title":"Personal Blog","description":"A site for %TOPICS%","topics":["Students"," Developers","Researchers","Software Engineering","everyone"],"menu":[{"name":"Home","path":"/"},{"name":"Posts","path":"/archive"},{"name":"Tags","path":"/tags"}],"footerMenu":[{"name":"Posts","path":"/archive"},{"name":"Tags","path":"/tags"}],"search":true}}}}
