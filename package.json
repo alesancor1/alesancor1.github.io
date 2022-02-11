@@ -1,0 +1,23 @@
+{
+  "name": "alesancor1-personal-blog",
+  "description": "Personal Blog of alesancor1",
+  "author": {
+    "name": "alesancor1"
+  },
+  "private": true,
+  "version": "1.0.0",
+  "main": "n/a",
+  "license": "MIT",
+  "scripts": {
+    "build": "gatsby build",
+    "develop": "gatsby develop",
+    "start": "npm run develop",
+    "serve": "gatsby serve"
+  },
+  "dependencies": {
+    "@nehalist/gatsby-theme-nehalem": "^1.0.3",
+    "gatsby": "^2.13.55",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
+  }
+}
