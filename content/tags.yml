@@ -1,4 +1,20 @@
-- name: Demo
+- name: NodeJS
+  color: "#007acc"
+  icon: ./assets/images/logo.png
+  featured: false
+
+- name: Docker
+  color: "#007acc"
+  icon: ./assets/images/logo.png
+  featured: false
+
+- name: Guide
   color: "#007acc"
   icon: ./assets/images/logo.png
   featured: true
+
+- name: Beginner
+  color: "#007acc"
+  icon: ./assets/images/logo.png
+  featured: true
+
