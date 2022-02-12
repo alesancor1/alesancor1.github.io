@@ -8,7 +8,22 @@
   icon: ./assets/images/logo.png
   featured: false
 
+- name: Kubernetes
+  color: "#007acc"
+  icon: ./assets/images/logo.png
+  featured: false
+
+- name: Helm
+  color: "#007acc"
+  icon: ./assets/images/logo.png
+  featured: false
+
 - name: Guide
+  color: "#007acc"
+  icon: ./assets/images/logo.png
+  featured: true
+
+- name: Technologies
   color: "#007acc"
   icon: ./assets/images/logo.png
   featured: true
@@ -18,3 +33,7 @@
   icon: ./assets/images/logo.png
   featured: true
 
+- name: Mid-level
+  color: "#007acc"
+  icon: ./assets/images/logo.png
+  featured: true

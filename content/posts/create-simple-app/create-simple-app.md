@@ -183,7 +183,7 @@ Once the Dockerfile is ready, we can build our image by running the **docker bui
 
     docker build -t alesancor1/simple-app .
 
-> If you are planning to upload the image to **DockerHub**, you need to specify the tag following the <username>/<app-name> format.
+> If you are planning to upload the image to **DockerHub**, you need to specify the tag following the username/app-name format.
 
 Now the image is created and stored in our local machine, for pushing it to DockerHub, we will need to login to DockerHub. To do this, we will use the **docker login** command.
 
