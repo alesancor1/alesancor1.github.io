@@ -26,6 +26,9 @@ updated: 2022-02-12
     tr:nth-child(odd) {
         background-color: #efefef;
     }
+    summary {
+        cursor: pointer;
+    }
 </style>
 
 ## Introduction
@@ -79,7 +82,7 @@ These six components can each run on Linux or as Docker containers (This is the 
 
         $ kubectl create RESOURCE NAME [...PROPERTIES]
 
-    >Check the [Resources](#resources) sections to see available resources
+    > You can run ```kubectl api-resources``` to see the different resources available. Check the [Resources](#resources) sections for more information
 
 - **Kubectl get**
     
@@ -168,12 +171,316 @@ These six components can each run on Linux or as Docker containers (This is the 
 
 ## Resources
 
+Every application running inside a kubernetes cluster is deployed by creating a set of resources that interact with each other and make the application accesible to the outside world.
+
+Those resources can be of many **types**, each one performs a specific task inside the cluster. They can be created declaratively through **manifests** files. There is not a certain number of resources, since they are retrieved from the Kubernetes API, which is extensible. However, Kubernetes natively provides a set of resources that are pre-defined in the endpoints of Kubernetes API, check the [Kubernetes API](#kubernetes-api) section containing some of the most commonly used.
+
+> A resource is an endpoint in the **Kubernetes API** that stores a collection of API objects of a certain kind; for example, the built-in pods resource contains a collection of Pod objects.
+
 ### Manifests
+Manifests are files that describes the **properties** of a certain resource type. They can be written in **YAML** or **JSON** format, and vary depending on the resource type. Since many applications require multiple resources to be created, their properties can be simplified by writting the resources in the same file separated by ```---``` lines. The following example shows how to deploy an nginx container in a pod with a LoadBalancer service to allow connections fron outside the cluster:
 
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx-svc
+  labels:
+    app: nginx
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: nginx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-nginx
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+```
+Resources can be created through manifests using `kubectl apply -f <manifest>` command.
+
+> It is a recommended practice to put resources related to the same microservice or application tier into the same file, and to group all of the files associated with your application in the same directory. If the tiers of your application bind to each other using DNS, you can deploy all of the components of your stack together
 ### Kubernetes API
- 
-### Project Contour
+The kubernetes API provides a set of endpoints that allow you to interact with the resources in the cluster. The API is extensible, and new resources can be added to it. The following resources comes pre-defined in the Kubernetes API and are the most commonly used for any application deployment:
 
-### Cert-Manager
+<details>
+<summary><b>&emsp;Pods</b></summary><div style="padding-left: 30px"> 
 
-## Conclusion
+A pod is a collection of containers that are deployed on a node, it may be composed of only one container, or many directly connected containers in some advanced scenarios. Pods run inside a node of the cluster and most of the time are dynamically created by deployments.
+
+<img src="./pods.png">
+
+The following manifest file describes a pod that contains a single container running nginx:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: static-web
+spec:
+  containers:
+    - name: web
+      image: nginx
+      ports:
+        - name: web
+          containerPort: 80
+          protocol: TCP
+```
+
+> Note that the apiVersion field indicates "v1". The apiVersion depends on the type of resource, run `kubectl api-resources` to see the list of available resources and their api group.
+</div>
+</details>
+
+<!-- ============================================================== -->
+
+<details>
+<summary><b>&emsp;ReplicaSet</b></summary><div style="padding-left: 30px"> 
+
+The ReplicaSet manage a number of Pods and guarantees that a specified number of Pods are running at any given time. Despite being a step further than pods, ReplicaSets are not meant to be used directly, just like pods, since deployments are a higher level solution capable of manage ReplicaSets.
+
+```yaml
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: example
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: example
+  template:
+    metadata:
+      labels:
+        tier: example
+    spec:
+      containers:
+      - name: example
+        image: example/example
+```
+> Note that ReplicaSet manifests are really similar to Pods'. They both include specs for the containers to be deployed, but ReplicaSets additionally includes a field for the replicas that will be created, and a selector to match other pods that could be managed.
+
+</div></details>
+
+<!-- ============================================================== -->
+
+<details>
+<summary><b>&emsp;Deployments</b></summary><div style="padding-left: 30px"> 
+
+The deployment resource manage Pods and ReplicaSets by providing declarative updates. It is a higher level resource than ReplicaSets, since it is able to manage them. ReplicaSet should not be managed directly, instead they are managed through the Deployment resource. Typical use cases for deployments include deploying ReplicaSets, declaring new state for Pods, roll back to previous state, horizontal scaling, etc.
+
+> Deployments manifests file are the same as ReplicaSet manifests, but specifying the kind Deployment instead of ReplicaSet.
+</div></details>
+
+<!-- ============================================================== -->
+
+<details>
+<summary><b>&emsp;Namespaces</b></summary><div style="padding-left: 30px"> 
+
+Namespaces are used to organize resources in the cluster. They segregate resources into different namespaces, and provide isolation between different applications. Once a namespace is created, it can be used under the `metadata.namespace` field of those resources which are namespaced (see [kubernetes api-resources](https://kubernetes.io/docs/reference/kubectl/overview/#resource-types)).
+
+In order to create a new namespace, run:
+```bash
+$ kubectl create namespace <namespace>
+```
+
+> When executing kubectl commands on namespaced resources, remember to add the `-n` flag to specify the namespace. All namespaced resources are removed when the namespace is deleted.
+</div></details>
+
+<!-- ============================================================== -->
+
+<details>
+<summary><b>&emsp;Services</b></summary><div style="padding-left: 30px"> 
+
+Services describe how an application (a set of pods) is accessed, and how it is exposed to the outside world. Services can expose ports and even provide a load balancer. This way, service discovery is automatically provided by kubernetes, giving the pods its own IP address and a DNS name.
+
+Since pods are being destroyed and redeployed, there is no way to know which IP address each pod has at the time. That is why we use services.
+
+> In Kubernetes, a Service is an abstraction which defines a logical set of Pods and a policy by which to access them (sometimes this pattern is called a micro-service). The set of Pods targeted by a Service is usually determined by a selector.
+
+A serice can be defined through this manifest file:
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  type: {{ ClusterIP | NodePort | LoadBalancer | ExternalName }}
+  selector:
+    app: MyApp
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 1234
+      nodePort: 30000 # If type == NodePort
+```
+
+Depending on the type of service, the service can perform different tasks inside the cluster:
+
+- **ClusterIP:** Exposes the Service on a cluster-internal IP. Choosing this value makes the Service only reachable from within the cluster. This is the default *ServiceType*.
+
+- **NodePort:** Exposes the Service on each Node's IP at a static port (the NodePort). A ClusterIP Service, to which the NodePort Service routes, is automatically created. You'll be able to contact the NodePort Service, from outside the cluster, by requesting `<NodeIP>:<NodePort>`.
+
+- **LoadBalancer:** Exposes the Service externally using a cloud provider's load balancer. NodePort and ClusterIP Services, to which the external load balancer routes, are automatically created.
+
+- **ExternalName:** *(Needs Kube-dns >= 1.7 or CoreDNS >= 0.0.8)* Maps the Service to the contents of the externalName field (e.g. foo.bar.example.com), by returning a CNAME record with its value. No proxying of any kind is set up.
+
+> Kubernetes by default restricts nodePort port range to 30000-32767. This behaviour can be configured by setting the `--service-node-port-range` flag in the kubeapi-server.yaml file. In case you run a cluster locally with Docker, check [this site](https://stackoverflow.com/questions/64758012/location-of-kubernetes-config-directory-with-docker-desktop-on-windows) to find where the kubeapi-server.yaml file is located.
+
+When declaring a service, we should know what ports are we going to use to connect our application to the service. That's why is important to know the differences between `port`, `targetPort` and `nodePort` fields.
+
+- **Port:** Cluster port to which the service will be listening.
+- **TargetPort:** Port where the application inside a container is actually running.
+- **NodePort:** Port Mapping to be exposed outside the cluster.
+
+> **Example:** If we hace an app running on port 8080 on the container, and we specify Port = 8085, TargetPort = 8080 and NodePort = 30000, the service will be exposed outside the cluster at `<NodeIP>:30000`. Then, port 30000 will be mapped to service port 8085 and the service will redirect the traffic to the port 8080 of the container.
+
+The following picture sums up the behaviour of each service type.
+
+![services](services.png)
+
+</div></details>
+
+<!-- ============================================================== -->
+
+<details>
+<summary><b>&emsp;PersistentVolumes</b></summary><div style="padding-left: 30px"> 
+
+A PersistentVolume (PV) is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using Storage Classes. It is a resource in the cluster just like a node is a cluster resource. PVs are volume plugins like Volumes, but have a lifecycle independent of any individual Pod that uses the PV. This API object captures the details of the implementation of the storage, be that NFS, iSCSI, or a cloud-provider-specific storage system.
+
+In order to be used, Persistent Volumes needs match a Persistent Volume Claim (PVC) so the space declared in the PV is claimed. This is called **Static Provisioning**. When none of the statically created PV match a PVC, the cluster try to **dynamically provision** a volume specially for the PVC.
+
+The following manifests describes a persistent volume that tries to bind to a PVC. This example shows how to **Reserve a Persistent Volume**, meaning that this PV will only bind to the PVC indicated in the claimRef field:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: foo-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: ""
+  claimRef:
+    name: foo-pvc
+    namespace: foo
+```
+
+**Access Modes** are an important field since it defines how the volume will be accessed:
+- **ReadWriteOnce**: The volume can be mounted as read-write by a single node.
+- **ReadOnlyMany**: The volume can be mounted by multiple nodes read-only.
+- **ReadWriteMany**: The volume can be mounted by multiple nodes read-write.
+</div></details>
+
+<!-- ============================================================== -->
+
+<details>
+<summary><b>&emsp;PersistentVolumeClaim</b></summary><div style="padding-left: 30px"> 
+
+> Check the Persistent Volume section above for more information about Persistent Volumes.
+
+A **PersistentVolumeClaim (PVC)** is a request for storage by a user. It is similar to a Pod. Pods consume node resources and PVCs consume PV resources. Pods can request specific levels of resources (CPU and Memory). Claims can **request specific size and access modes**, but they doesn't really need the existence of a PV matching them, since the cluster will **dynamically provision** a new PV.
+
+The following example manifest will create a PVC requesting 20Gi of storage with **ReadWriteOnce** access mode, if any existing PV matches the requirements then they will be bound together, else a new PV will be dynamically provisioned.
+
+```yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: simple-db
+  namespace: simple-app
+  labels:
+    app: simple-db
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+```	
+
+</div></details>
+
+<!-- ============================================================== -->
+
+<details>
+<summary><b>&emsp;ConfigMaps</b></summary><div style="padding-left: 30px"> 
+
+A ConfigMap is an API object used to store non-confidential data in key-value pairs. Pods can consume ConfigMaps as environment variables, command-line arguments, or as configuration files in a volume.
+
+A ConfigMap allows you to decouple environment-specific configuration from your container images, so that your applications are easily portable.
+
+> **Caution**: ConfigMap does not provide secrecy or encryption. If the data you want to store are confidential, use a **Secret** rather than a ConfigMap, or use additional (third party) tools to keep your data private.
+
+You can write a Pod spec that refers to a ConfigMap and configures the container(s) in that Pod based on the data in the ConfigMap. The Pod and the ConfigMap must be in the same namespace.
+
+> **Note**: The spec of a static Pod cannot refer to a ConfigMap or any other API objects.
+
+Here's an example ConfigMap that has some keys with single values, and other keys where the value looks like a fragment of a configuration format.
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: game-demo
+data:
+  # property-like keys; each key maps to a simple value
+  player_initial_lives: "3"
+  ui_properties_file_name: "user-interface.properties"
+
+  # file-like keys
+  game.properties: |
+    enemy.types=aliens,monsters
+    player.maximum-lives=5    
+  user-interface.properties: |
+    color.good=purple
+    color.bad=yellow
+    allow.textmode=true   
+```
+
+There are four different ways that you can use a **ConfigMap** to configure a container inside a Pod:
+- Inside a container command and args
+- Environment variables for a container
+- Add a file in read-only volume, for the application to read
+- Write code to run inside the Pod that uses the Kubernetes API to read a ConfigMap
+
+> **Note:** When ConfigMaps are configured as volumes mounted by pods, every key insde the config map will transform into a file in the directory where the volume is mounted.
+
+</div></details>
+
+<!-- ============================================================== -->
+
+<details>
+<summary><b>&emsp;Secrets</b></summary><div style="padding-left: 30px"> 
+
+Secrets are created the same way as configMaps, but they are used to store confidential data. Secrets don't show their data when `kubectl get secret <secret>` is executed instead, they will show the codified data. Just like ConfigMaps, secrets can be configured inside a container command and args, as env variables or as files in a volume.
+
+</div></details>
+
+> Check other resources API like [Project Contour](https://projectcontour.io/docs/v1.19.1/) and [Cert-Manager](https://cert-manager.io/docs) for managing reverse proxy, web sockets and HTTP over TLS Certificates.
+
+<h2> Conclusion </h2>
+
+This is the end of this post about kubernetes, eventhough it might seem pretty long, Kubernetes is a very powerful platform that extends *reeeeeaally* far beyond this post. Feel free to check out the [Kubernetes documentation](https://kubernetes.io/docs/home/) and keep learning on one of the most used technologies world wide.
