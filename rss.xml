@@ -1,4 +1,284 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[RSS Feed]]></title><description><![CDATA[A site for %TOPICS%]]></description><link>https://alesancor1.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 13 Feb 2022 00:33:57 GMT</lastBuildDate><item><title><![CDATA[Kubernetes fundamentals]]></title><description><![CDATA[A really brief introduction on the basics of Kubernetes: CLI commands, commonly used resources and basic cluster administration.]]></description><link>https://alesancor1.github.io/kubernetes-fundamentals</link><guid isPermaLink="false">https://alesancor1.github.io/kubernetes-fundamentals</guid><pubDate>Sat, 12 Feb 2022 00:00:00 GMT</pubDate><content:encoded>&lt;style&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[RSS Feed]]></title><description><![CDATA[A site for %TOPICS%]]></description><link>https://alesancor1.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 13 Feb 2022 02:54:52 GMT</lastBuildDate><item><title><![CDATA[Helm fundamentals: The package manager for Kubernetes]]></title><description><![CDATA[Discovering the basics of Helm: Templating kubernetes manifests and deploying charts]]></description><link>https://alesancor1.github.io/helm-fundamentals</link><guid isPermaLink="false">https://alesancor1.github.io/helm-fundamentals</guid><pubDate>Sun, 13 Feb 2022 00:00:00 GMT</pubDate><content:encoded>&lt;style&gt;
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    td, th {
+        border: 1px solid #dddddd;
+        padding: 8px;
+    }
+    th {
+        text-align: center;
+        background-color: #dddddd;
+    }
+    tr:nth-child(even) {
+        background-color: #ffffff;
+    }
+    tr:nth-child(odd) {
+        background-color: #efefef;
+    }
+    summary {
+        cursor: pointer;
+    }
+&lt;/style&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;NOTE:&lt;/strong&gt; This post is about the Helm package manager for Kubernetes, if you don&apos;t know about Kubernetes, please read the &lt;a href=&quot;/kubernetes-fundamentals&quot;&gt;Kubernetes fundamentals&lt;/a&gt; post first.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;introduction&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#introduction&quot; aria-label=&quot;introduction permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;Helm is the package manager for kubernetes. Just like npm to node, Helm provides an easy way to install and manage software deployments inside a Kubernetes cluster. Helm is template-based, meaning that it can be used to deploy any kind of software, from microservices to complex applications.&lt;/p&gt;
+&lt;p&gt;Helm main object is called &lt;strong&gt;Chart&lt;/strong&gt;, consisting of a set of &lt;strong&gt;templates&lt;/strong&gt;, which are used along side a set of default values to generate valid &lt;strong&gt;kubernetes manifests&lt;/strong&gt;. Helm charts support dependencies, allowing to create child charts that can be used to create complex applications.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Helm templates are written in a language result of combining the &lt;strong&gt;Go template language&lt;/strong&gt;, some extra functions and a variety of wrappers to epose certain objects to templates. Many resources on &lt;a href=&quot;https://pkg.go.dev/text/template&quot;&gt;Go templates docs&lt;/a&gt; may be helpful when templating with Helm.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&quot;helm-charts&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#helm-charts&quot; aria-label=&quot;helm charts permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Helm Charts&lt;/h3&gt;
+&lt;p&gt;A Chart is a collection of files that describe a related set of Kubernetes resources. A single chart might be used to deploy something simple, like a memcached pod, or something complex, like a full web app stack with HTTP servers, databases, caches, and so on. &lt;/p&gt;
+&lt;p&gt;Charts are created as files laid out in a particular directory tree. They can be packaged into versioned archives to be deployed.&lt;/p&gt;
+&lt;h2 id=&quot;helm-cli&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#helm-cli&quot; aria-label=&quot;helm cli permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Helm CLI&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Helm provides a command line interface for managing our Helm installation. Below is a list of commands that can be used to interact with Helm, think of it as a quick reference cheat sheet. The complete documentation on Helm CLI can be found &lt;a href=&quot;https://helm.sh/docs/helm/&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&quot;helm-create&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#helm-create&quot; aria-label=&quot;helm create permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Helm create&lt;/h3&gt;
+&lt;p&gt;Creates a new chart. Running this command will create a directory named after the chart name, containing the basic &lt;a href=&quot;#chart-file-structure&quot;&gt;chart file structure&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$ helm create my-chart&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&quot;helm-list&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#helm-list&quot; aria-label=&quot;helm list permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Helm list&lt;/h3&gt;
+&lt;p&gt;List all of the releases for a specified namespace (uses current namespace context if not defined).&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$ helm list [flags]&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;Commonly used flags&lt;/summary&gt;&lt;div style=&quot;margin-left:20px; margin-top: 15px&quot;&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Flag&lt;/strong&gt;&lt;/th&gt;
+&lt;th align=&quot;center&quot;&gt;&lt;strong&gt;Shortcut&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Exampe&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;--all&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;-a&lt;/td&gt;
+&lt;td&gt;Show all releases without any filters&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;helm list -a&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;--short&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;-q&lt;/td&gt;
+&lt;td&gt;Short (quiet) format&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;helm list -q&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;--filter&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;&lt;/td&gt;
+&lt;td&gt;Filter by Perl-compatible regex&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;helm list --filter &apos;ara[a-z]+&apos;&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;&lt;/details&gt;
+&lt;h3 id=&quot;helm-dependency-list&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#helm-dependency-list&quot; aria-label=&quot;helm dependency list permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Helm dependency list&lt;/h3&gt;
+&lt;p&gt;List all of the dependencies for a specified chart.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$ helm dependency list CHART [flags]&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&quot;helm-dependency-update&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#helm-dependency-update&quot; aria-label=&quot;helm dependency update permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Helm dependency update&lt;/h3&gt;
+&lt;p&gt;Update the dependencies for a specified chart.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$ helm dependency update CHART [flags]&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;NOTE:&lt;/strong&gt; This command is commonly used as &lt;code class=&quot;language-text&quot;&gt;helm dep up&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&quot;helm-repo-add&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#helm-repo-add&quot; aria-label=&quot;helm repo add permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Helm repo add&lt;/h3&gt;
+&lt;p&gt;Adds a repository containing installable helm charts. When installing a chart, dependencies repositories is automatically added.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$ helm repo add NAME URL [flags]&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;Commonly used flags&lt;/summary&gt;&lt;div style=&quot;margin-left:20px; margin-top: 15px&quot;&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Flag&lt;/strong&gt;&lt;/th&gt;
+&lt;th align=&quot;center&quot;&gt;&lt;strong&gt;Shortcut&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;--allow-deprecated-repos&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;&lt;/td&gt;
+&lt;td&gt;Set to true to allow adding deprecated repos&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;--username &amp;#x3C;string&gt;&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;&lt;/td&gt;
+&lt;td&gt;Repository username&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;--password &amp;#x3C;string&gt;&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;&lt;/td&gt;
+&lt;td&gt;Repository password&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;--password-stdin&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;&lt;/td&gt;
+&lt;td&gt;Prompts an input for the password&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;: Always try to use --password-stdin flag iover --password flag to avoid your password being storaged in the shell history.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;&lt;/details&gt;
+&lt;h3 id=&quot;helm-install&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#helm-install&quot; aria-label=&quot;helm install permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Helm install&lt;/h3&gt;
+&lt;p&gt;Installs a new chart. The install argument must be a chart reference, a path to a packaged chart, a path to an unpacked chart directory or a URL.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;    $ helm install NAME CHART [flags]&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;There are five different ways you can express the chart you want to install:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;By chart reference:&lt;/strong&gt; &lt;code class=&quot;language-text&quot;&gt;helm install mymaria example/mariadb&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;By path to a packaged chart:&lt;/strong&gt; &lt;code class=&quot;language-text&quot;&gt;helm install mynginx ./nginx-1.2.3.tgz&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;By path to an unpacked chart directory:&lt;/strong&gt; &lt;code class=&quot;language-text&quot;&gt;helm install mynginx ./nginx&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;By absolute URL:&lt;/strong&gt; &lt;code class=&quot;language-text&quot;&gt;helm install mynginx https://example.com/charts/nginx-1.2.3.tgz&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;By chart reference and repo url:&lt;/strong&gt; &lt;code class=&quot;language-text&quot;&gt;helm install --repo https://example.com/charts/ mynginx nginx&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;details&gt;
+&lt;summary&gt;Commonly used flags&lt;/summary&gt;&lt;div style=&quot;margin-left:20px; margin-top: 15px&quot;&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Flag&lt;/strong&gt;&lt;/th&gt;
+&lt;th align=&quot;center&quot;&gt;&lt;strong&gt;Shortcut&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Exampe&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;--dependency-update&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;&lt;/td&gt;
+&lt;td&gt;Show all releases without any filters&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;helm install example example --depency-update&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;--dry-run&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;&lt;/td&gt;
+&lt;td&gt;simulate install&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;helm install example example --dry-run&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;--set&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;&lt;/td&gt;
+&lt;td&gt;set values from command line&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;helm install example example --set key=val&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;--values&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;-f&lt;/td&gt;
+&lt;td&gt;Specify user defined YAML values file&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;helm install example example --f values.yml&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;&lt;/details&gt;
+&lt;h2 id=&quot;creating-charts&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#creating-charts&quot; aria-label=&quot;creating charts permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Creating Charts&lt;/h2&gt;
+&lt;p&gt;For creating a Chart, we use the &lt;code class=&quot;language-text&quot;&gt;helm create NAME&lt;/code&gt; command. This command will generate the &lt;strong&gt;directory structure&lt;/strong&gt; for a new chart.&lt;/p&gt;
+&lt;h3 id=&quot;chart-file-structure&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#chart-file-structure&quot; aria-label=&quot;chart file structure permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Chart File Structure&lt;/h3&gt;
+&lt;p&gt;A chart is organized as a collection of files inside of a directory. The directory name is the name of the chart (without versioning information). Thus, a chart describing WordPress would be stored in a wordpress/ directory.&lt;/p&gt;
+&lt;p&gt;Inside of this directory, Helm will expect a structure that matches this:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;wordpress/
+Chart.yaml              # A YAML file containing information about the chart
+LICENSE                 # OPTIONAL: A plain text file containing the license for the chart
+README.md               # OPTIONAL: A human-readable README file
+values.yaml             # The default configuration values for this chart
+values.schema.json      # OPTIONAL: A JSON Schema for imposing a structure on the values.yaml file
+charts/                 # A directory containing any charts upon which this chart depends.
+crds/                   # Custom Resource Definitions
+templates/              # A directory of templates that, when combined with values,
+                        # will generate valid Kubernetes manifest files.
+templates/NOTES.txt     # OPTIONAL: A plain text file containing short usage notes&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Helm reserves use of the charts/, crds/, and templates/ directories, and of the listed file names. Other files will be left as they are.&lt;/p&gt;
+&lt;h3 id=&quot;the-chartyaml-file&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#the-chartyaml-file&quot; aria-label=&quot;the chartyaml file permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;The Chart.yaml file&lt;/h3&gt;
+&lt;p&gt;The chart file is required for a chart. It contains metdadta about the chart, including the name, version, description, and other information. Since Helm v3, the Chart.yaml file also contains a list of the chart dependencies. &lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;yaml&quot;&gt;&lt;pre class=&quot;language-yaml&quot;&gt;&lt;code class=&quot;language-yaml&quot;&gt;&lt;span class=&quot;token key atrule&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; The chart API version (required)
+&lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; The name of the chart (required)
+&lt;span class=&quot;token key atrule&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; A SemVer 2 version (required)
+&lt;span class=&quot;token key atrule&quot;&gt;kubeVersion&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; A SemVer range of compatible Kubernetes versions (optional)
+&lt;span class=&quot;token key atrule&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; A single&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt;sentence description of this project (optional)
+&lt;span class=&quot;token key atrule&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; The type of the chart (optional)
+&lt;span class=&quot;token key atrule&quot;&gt;keywords&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; A list of keywords about this project (optional)
+&lt;span class=&quot;token key atrule&quot;&gt;home&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; The URL of this projects home page (optional)
+&lt;span class=&quot;token key atrule&quot;&gt;sources&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; A list of URLs to source code for this project (optional)
+&lt;span class=&quot;token key atrule&quot;&gt;dependencies&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token comment&quot;&gt;# A list of the chart requirements (optional)&lt;/span&gt;
+  &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; The name of the chart (nginx)
+    &lt;span class=&quot;token key atrule&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; The version of the chart (&quot;1.2.3&quot;)
+    &lt;span class=&quot;token key atrule&quot;&gt;repository&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; (optional) The repository URL (&quot;https&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;//example.com/charts&quot;) or alias (&quot;@repo&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt;name&quot;)
+    &lt;span class=&quot;token key atrule&quot;&gt;condition&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; (optional) A yaml path that resolves to a boolean&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; used for enabling/disabling charts (e.g. subchart1.enabled )
+    &lt;span class=&quot;token key atrule&quot;&gt;tags&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token comment&quot;&gt;# (optional)&lt;/span&gt;
+      &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; Tags can be used to group charts for enabling/disabling together
+    &lt;span class=&quot;token key atrule&quot;&gt;import-values&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token comment&quot;&gt;# (optional)&lt;/span&gt;
+      &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; ImportValues holds the mapping of source values to parent key to be imported. Each item can be a string or pair of child/parent sublist items.
+    &lt;span class=&quot;token key atrule&quot;&gt;alias&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; (optional) Alias to be used for the chart. Useful when you have to add the same chart multiple times
+&lt;span class=&quot;token key atrule&quot;&gt;maintainers&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token comment&quot;&gt;# (optional)&lt;/span&gt;
+  &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; The maintainers name (required for each maintainer)
+    &lt;span class=&quot;token key atrule&quot;&gt;email&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; The maintainers email (optional for each maintainer)
+    &lt;span class=&quot;token key atrule&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; A URL for the maintainer (optional for each maintainer)
+&lt;span class=&quot;token key atrule&quot;&gt;icon&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; A URL to an SVG or PNG image to be used as an icon (optional).
+&lt;span class=&quot;token key atrule&quot;&gt;appVersion&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; The version of the app that this contains (optional). Needn&apos;t be SemVer. Quotes recommended.
+&lt;span class=&quot;token key atrule&quot;&gt;deprecated&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; Whether this chart is deprecated (optional&lt;span class=&quot;token punctuation&quot;&gt;,&lt;/span&gt; boolean)
+&lt;span class=&quot;token key atrule&quot;&gt;annotations&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;example&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; A list of annotations keyed by name (optional).&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3 id=&quot;templating&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#templating&quot; aria-label=&quot;templating permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Templating&lt;/h3&gt;
+&lt;p&gt;When it comes to templates, Helm will use the &lt;code class=&quot;language-text&quot;&gt;{{}}&lt;/code&gt; syntax to substitute values into the template. Everything we need to do is take &lt;strong&gt;kubernetes manifests&lt;/strong&gt; and substitute values into them. Defaults values will be written to the values.yaml file, and users will be able to override them through their own values.yaml file or command line flags.&lt;/p&gt;
+&lt;p&gt;Helm provides &lt;strong&gt;flow control&lt;/strong&gt; support and some &lt;strong&gt;Built-in Objects&lt;/strong&gt; that makes templating generic manifests easier. Since charts can be installed multiple times with different values, we should try to make manifests as generic as possible, and use values to control the behavior of the chart.&lt;/p&gt;
+&lt;h4 id=&quot;built-in-objects&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#built-in-objects&quot; aria-label=&quot;built in objects permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Built-in Objects&lt;/h4&gt;
+&lt;p&gt;The following built-in objects are available for use in templates:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Release&lt;/strong&gt;: Describes the release itself, contains the following fields:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Release.Name&lt;/em&gt;: The release name&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Release.Namespace&lt;/em&gt;: The namespace to be released into (if the manifest doesn’t override)&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Release.IsUpgrade&lt;/em&gt;: This is set to true if the current operation is an upgrade or rollback.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Release.IsInstall&lt;/em&gt;: This is set to true if the current operation is an install.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Release.Revision&lt;/em&gt;: The revision number for this release.It is incremented with each upgrade and rollback.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Release.Service&lt;/em&gt;: The service that is rendering the present template. On Helm, this is always Helm.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Values&lt;/strong&gt;: Values passed into the template from the &lt;em&gt;values.yaml&lt;/em&gt; file and from user-supplied files. By default, Values is empty.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Chart&lt;/strong&gt;: The contents of the &lt;em&gt;Chart.yaml&lt;/em&gt; file. All data is accessible through the &lt;code class=&quot;language-text&quot;&gt;{{ .Chart.&amp;lt;Field&gt; }}&lt;/code&gt; syntax.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Template&lt;/strong&gt;: Contains information about the current template that is being executed&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;Template.Name&lt;/em&gt;: A namespaced file path to the current template &lt;em&gt;(e.g. mychart/templates/mytemplate.yaml)&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;Template.BasePath&lt;/em&gt;: The namespaced path to the templates directory of the current chart &lt;em&gt;(e.g. mychart/templates)&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;These are the most common objects, there are other ones like &lt;strong&gt;Files&lt;/strong&gt; for access non-special files, or &lt;strong&gt;Capabilities&lt;/strong&gt;, which provides information about the capabilities of the Kubernetes cluster.&lt;/p&gt;
+&lt;p&gt;Below is an example of a template that uses the &lt;code class=&quot;language-text&quot;&gt;{{ .Values.key }}&lt;/code&gt; syntax to create a service manifest by accessing the values in the Values object, appart from Built-in Objects and conditionals.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;yaml&quot;&gt;&lt;pre class=&quot;language-yaml&quot;&gt;&lt;code class=&quot;language-yaml&quot;&gt;&lt;span class=&quot;token key atrule&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; v1
+&lt;span class=&quot;token key atrule&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; Service
+&lt;span class=&quot;token key atrule&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;labels&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token key atrule&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt; .Chart.Name &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt; .Chart.Name &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt; .Release.Namespace &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;token key atrule&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; if eq .Values.node_env &quot;development&quot; &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; NodePort
+  &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; end &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt; .Chart.Name &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+      &lt;span class=&quot;token key atrule&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt; .Values.port &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+      &lt;span class=&quot;token key atrule&quot;&gt;protocol&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; TCP
+      &lt;span class=&quot;token key atrule&quot;&gt;targetPort&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt; .Values.port &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+      &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; if eq .Values.node_env &quot;development&quot; &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+      &lt;span class=&quot;token key atrule&quot;&gt;nodePort&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt; .Values.port &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+      &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; end &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token key atrule&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt; .Chart.Name &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h2 id=&quot;conclusion&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#conclusion&quot; aria-label=&quot;conclusion permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Helm simplifies the creation of kubernetes manifests a lot. It may be a little confusing at the start because of Go Template syntax, but once you get used to it, templating complex manifests becomes really easy. Flow control and Dependency support brings on the capacity of generating one template for many different manifests. Besides, Helm automatically installs Kubernetes resources in order, so you don&apos;t need to worry about installing a resource before installing another one.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Tip&lt;/strong&gt;: Charts are usually uploaded to &lt;a href=&quot;https://artifacthub.io/&quot;&gt;Artifact Hub&lt;/a&gt;, take a look at some of the most rated charts on the site.&lt;/p&gt;
+&lt;/blockquote&gt;</content:encoded></item><item><title><![CDATA[Kubernetes fundamentals]]></title><description><![CDATA[A really brief introduction on the basics of Kubernetes: CLI commands, commonly used resources and basic cluster administration.]]></description><link>https://alesancor1.github.io/kubernetes-fundamentals</link><guid isPermaLink="false">https://alesancor1.github.io/kubernetes-fundamentals</guid><pubDate>Sat, 12 Feb 2022 00:00:00 GMT</pubDate><content:encoded>&lt;style&gt;
     table {
         border-collapse: collapse;
         width: 100%;
