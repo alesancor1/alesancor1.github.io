@@ -329,7 +329,7 @@ mongoose<span class="token punctuation">.</span><span class="token function">con
 <p>Once the Dockerfile is ready, we can build our image by running the <strong>docker build</strong> command. We will use the <strong>-t</strong> flag to specify the name of the image we want to build.</p>
 <div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">docker build -t alesancor1/simple-app .</code></pre></div>
 <blockquote>
-<p>If you are planning to upload the image to <strong>DockerHub</strong>, you need to specify the tag following the <username>/<app-name> format.</p>
+<p>If you are planning to upload the image to <strong>DockerHub</strong>, you need to specify the tag following the username/app-name format.</p>
 </blockquote>
 <p>Now the image is created and stored in our local machine, for pushing it to DockerHub, we will need to login to DockerHub. To do this, we will use the <strong>docker login</strong> command.</p>
 <div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">docker login -u &lt;username> --password-stdin</code></pre></div>

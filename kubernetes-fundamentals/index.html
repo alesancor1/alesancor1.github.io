@@ -1,0 +1,768 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="ie=edge"/><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/><style data-href="/styles.5de42d6f490bd156c597.css" id="gatsby-global-css">code[class*=language-],pre[class*=language-]{color:#f8f8f2;background:none;text-shadow:0 1px rgba(0,0,0,.3);font-family:Consolas,Monaco,Andale Mono,Ubuntu Mono,monospace;font-size:1em;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-ms-hyphens:none;hyphens:none}pre[class*=language-]{padding:1em;margin:.5em 0;overflow:auto;border-radius:.3em}:not(pre)>code[class*=language-],pre[class*=language-]{background:#272822}:not(pre)>code[class*=language-]{padding:.1em;border-radius:.3em;white-space:normal}.token.cdata,.token.comment,.token.doctype,.token.prolog{color:#8292a2}.token.punctuation{color:#f8f8f2}.token.namespace{opacity:.7}.token.constant,.token.deleted,.token.property,.token.symbol,.token.tag{color:#f92672}.token.boolean,.token.number{color:#ae81ff}.token.attr-name,.token.builtin,.token.char,.token.inserted,.token.selector,.token.string{color:#a6e22e}.language-css .token.string,.style .token.string,.token.entity,.token.operator,.token.url,.token.variable{color:#f8f8f2}.token.atrule,.token.attr-value,.token.class-name,.token.function{color:#e6db74}.token.keyword{color:#66d9ef}.token.important,.token.regex{color:#fd971f}.token.bold,.token.important{font-weight:700}.token.italic{font-style:italic}.token.entity{cursor:help}</style><meta name="generator" content="Gatsby 2.32.13"/><title data-react-helmet="true">Kubernetes fundamentals - Personal Blog</title><meta data-react-helmet="true" name="description" content="A really brief introduction on the basics of Kubernetes: CLI commands, commonly used resources and basic cluster administration."/><meta data-react-helmet="true" property="og:title" content="Kubernetes fundamentals - Personal Blog"/><meta data-react-helmet="true" property="og:type" content="website"/><meta data-react-helmet="true" property="og:description" content="A really brief introduction on the basics of Kubernetes: CLI commands, commonly used resources and basic cluster administration."/><meta data-react-helmet="true" property="og:url" content="https://alesancor1.github.io/kubernetes-fundamentals"/><meta data-react-helmet="true" name="twitter:label1" content="Written by"/><meta data-react-helmet="true" name="twitter:data1" content="alesancor1"/><meta data-react-helmet="true" name="twitter:card" content="summary"/><meta data-react-helmet="true" name="twitter:creator" content="alesancor1"/><meta data-react-helmet="true" name="twitter:title" content="Kubernetes fundamentals - Personal Blog"/><meta data-react-helmet="true" name="twitter:description" content="A really brief introduction on the basics of Kubernetes: CLI commands, commonly used resources and basic cluster administration."/><meta data-react-helmet="true" name="keywords" content="Students,  Developers, Researchers, Software Engineering, everyone, Technologies, Mid-level, Kubernetes"/><meta data-react-helmet="true" name="article:published_time" content="2022-02-12T00:00:00.000Z"/><meta data-react-helmet="true" name="article:modified_time" content="2022-02-12T00:00:00.000Z"/><meta data-react-helmet="true" name="twitter:label2" content="Filed under"/><meta data-react-helmet="true" name="twitter:data2" content="Technologies"/><meta data-react-helmet="true" property="og:image" content="https://alesancor1.github.io/static/582b2a32df399cc3f40ef62fd099e438/1230c/cover.png"/><meta data-react-helmet="true" name="twitter:image" content="https://alesancor1.github.io/static/582b2a32df399cc3f40ef62fd099e438/1230c/cover.png"/><script data-react-helmet="true" type="application/ld+json">
+        {
+          "@context": "https://schema.org/",
+          "@type": "Article",
+          "author": {
+            "@type": "Person",
+            "name": "alesancor1"
+          },
+          "keywords": "Technologies, Mid-level, Kubernetes",
+          "headline": "Kubernetes fundamentals - Personal Blog",
+          "url": "https://alesancor1.github.io/kubernetes-fundamentals",
+          "datePublished": "2022-02-12T00:00:00.000Z",
+          "dateModified": "2022-02-12T00:00:00.000Z",
+          "image": {
+            "@type": "ImageObject",
+            "url": "https://alesancor1.github.io/static/582b2a32df399cc3f40ef62fd099e438/1230c/cover.png",
+            "width": "1000",
+            "height": "520"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": "Personal Blog"
+          },
+          "description": "A really brief introduction on the basics of Kubernetes: CLI commands, commonly used resources and basic cluster administration.",
+          "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https://alesancor1.github.io"
+          }
+        }
+      </script><style data-styled="bzOPpS kHKWRw fNaZYs gGoecn jLOYBk fVqyTA cROOCp gWrDHi MQpwo llwmof fYiJFa JoeLU gINVKO vNDEa gkyoqc lhFcmu knvKPj jAIPIr ihzMDK cxFkWP ccWeoH xRPUr bKAqcy cYqZmU bICWKm ghlSja jAnmWt fZmyke iHGPyz lfACiL lbetsi YZAaE hLhzMS gpDhwt ctpkkx etXHUJ dLTgSL cXOFUh bqPxdl" data-styled-version="4.4.1">
+/* sc-component-id: sc-global-2089182736 */
+html{line-height:1.15;-webkit-text-size-adjust:100%;} body{margin:0;} main{display:block;} h1{font-size:2em;margin:0.67em 0;} hr{box-sizing:content-box;height:0;overflow:visible;} pre{font-family:monospace,monospace;font-size:1em;} a{background-color:transparent;} abbr[title]{border-bottom:none;-webkit-text-decoration:underline;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted;} b,strong{font-weight:bolder;} code,kbd,samp{font-family:monospace,monospace;font-size:1em;} small{font-size:80%;} sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline;} sub{bottom:-0.25em;} sup{top:-0.5em;} img{border-style:none;} button,input,optgroup,select,textarea{font-family:inherit;font-size:100%;line-height:1.15;margin:0;} button,input{overflow:visible;} button,select{text-transform:none;} button,[type="button"],[type="reset"],[type="submit"]{-webkit-appearance:button;} button::-moz-focus-inner,[type="button"]::-moz-focus-inner,[type="reset"]::-moz-focus-inner,[type="submit"]::-moz-focus-inner{border-style:none;padding:0;} button:-moz-focusring,[type="button"]:-moz-focusring,[type="reset"]:-moz-focusring,[type="submit"]:-moz-focusring{outline:1px dotted ButtonText;} fieldset{padding:0.35em 0.75em 0.625em;} legend{box-sizing:border-box;color:inherit;display:table;max-width:100%;padding:0;white-space:normal;} progress{vertical-align:baseline;} textarea{overflow:auto;} [type="checkbox"],[type="radio"]{box-sizing:border-box;padding:0;} [type="number"]::-webkit-inner-spin-button,[type="number"]::-webkit-outer-spin-button{height:auto;} [type="search"]{-webkit-appearance:textfield;outline-offset:-2px;} [type="search"]::-webkit-search-decoration{-webkit-appearance:none;} ::-webkit-file-upload-button{-webkit-appearance:button;font:inherit;} details{display:block;} summary{display:list-item;} template{display:none;} [hidden]{display:none;} html{box-sizing:border-box;background-color:#fafafa;} body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;line-height:1.9em;} *{box-sizing:border-box;} h1,h2,h3,h4,h5,h6{outline:none;} a{color:#000;-webkit-text-decoration:none;text-decoration:none;} .gatsby-highlight{max-width:100% !important;} .gatsby-highlight-code-line{background-color:#353631;display:block;margin-right:-1em;margin-left:-1em;padding-right:1em;padding-left:0.75em;}
+/* sc-component-id: style__NavContainer-sc-1ck1w82-0 */
+.bzOPpS{z-index:1000;background-color:#20232a;position:-webkit-sticky;position:sticky;top:0;box-shadow:0 0 3px rgba(0,0,0,.03),0 3px 46px rgba(0,0,0,.07);}
+/* sc-component-id: style__Nav-sc-1ck1w82-1 */
+.kHKWRw{width:1260px;margin-left:auto;margin-right:auto;max-width:100%;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;position:relative;} @media (max-width:1300px){.kHKWRw{padding:0 20px;}}
+/* sc-component-id: style__NavWrapper-sc-1ck1w82-2 */
+.jLOYBk{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;width:100%;height:70px;white-space:nowrap;} @media (max-width:576px){.jLOYBk{width:90%;}}
+/* sc-component-id: style__NavMenu-sc-1ck1w82-3 */
+.fVqyTA{-webkit-align-self:center;-ms-flex-item-align:center;align-self:center;list-style-type:none;margin:0;padding:0;} @media (max-width:576px){.fVqyTA{width:80%;overflow-x:auto;overflow-y:hidden;-webkit-mask-image:linear-gradient(to right,transparent,#000 25px,#000 90%,transparent);mask-image:linear-gradient(to right,transparent,#000 25px,#000 90%,transparent);}}.cROOCp{-webkit-align-self:center;-ms-flex-item-align:center;align-self:center;list-style-type:none;margin:0;padding:0;}
+/* sc-component-id: style__NavMenuItem-sc-1ck1w82-4 */
+.gWrDHi{cursor:pointer;display:inline-block;border:0;background:transparent;outline:none;-webkit-text-decoration:none;text-decoration:none;}
+/* sc-component-id: style__NavLink-sc-1ck1w82-5 */
+.MQpwo{color:#fff;opacity:.8;padding:16px;-webkit-transition:opacity .5s;transition:opacity .5s;} .MQpwo:hover{opacity:1;}
+/* sc-component-id: style__SearchContainer-sc-1ck1w82-6 */
+.llwmof{-webkit-align-self:center;-ms-flex-item-align:center;align-self:center;position:relative;}
+/* sc-component-id: style__ToggleSearchButton-sc-1ck1w82-7 */
+.fYiJFa{cursor:pointer;color:#fff;opacity:.8;background:none;outline:none;border:0;-webkit-transition:opacity .5s;transition:opacity .5s;} .fYiJFa:hover{opacity:1;}
+/* sc-component-id: logo__LogoImage-sc-75wnhe-0 */
+.gGoecn{max-height:30px;width:30px;margin-right:45px;} @media (max-width:576px){.gGoecn{margin-right:15px;}}
+/* sc-component-id: logo__HomeLink-sc-75wnhe-1 */
+.fNaZYs{-webkit-align-self:center;-ms-flex-item-align:center;align-self:center;height:30px;}
+/* sc-component-id: style__StyledFooter-sc-1oqvjzu-0 */
+.gpDhwt{max-width:100%;padding:10px 0;z-index:700;position:relative;font-size:.9em;margin-top:50px;}
+/* sc-component-id: style__FooterContainer-sc-1oqvjzu-1 */
+.ctpkkx{width:1260px;margin-left:auto;margin-right:auto;max-width:100%;text-align:right;line-height:1.1em;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;} @media (max-width:1300px){.ctpkkx{padding:0 20px;}}
+/* sc-component-id: style__Copyright-sc-1oqvjzu-2 */
+.cXOFUh{margin:0;}
+/* sc-component-id: style__DesignBy-sc-1oqvjzu-3 */
+.bqPxdl{margin:0;opacity:.8;font-size:.8em;} .bqPxdl a{font-weight:bold;-webkit-text-decoration:none;text-decoration:none;color:#000;} .bqPxdl a:hover{-webkit-text-decoration:underline;text-decoration:underline;}
+/* sc-component-id: style__StyledNav-sc-1oqvjzu-4 */
+.etXHUJ ul{list-style-type:none;margin:0;padding:0;} .etXHUJ li{display:inline-block;margin-right:25px;} .etXHUJ li:last-child{margin-right:0;}
+/* sc-component-id: style__FooterMenuLink-sc-1oqvjzu-6 */
+.dLTgSL{color:#000;-webkit-text-decoration:none;text-decoration:none;}
+/* sc-component-id: toc__StyledNav-sc-1hwup8p-0 */
+.lhFcmu .toc-list{list-style-type:none;margin:0;padding:0;} .lhFcmu .toc-list .toc-list{padding-left:17px;padding-top:10px;} .lhFcmu .toc-list-item{line-height:1.2em;padding-bottom:10px;} .lhFcmu .toc-list-item:last-child{padding-bottom:0;} .lhFcmu .toc-link{color:#808080;-webkit-text-decoration:none;text-decoration:none;} .lhFcmu .is-active-link{color:#404040;font-weight:700;}
+/* sc-component-id: reading-progress__ReadingProgressBar-sc-vxjjnv-0 */
+.JoeLU{position:-webkit-sticky;position:sticky;height:5px;top:70px;background-color:#007acc;z-index:500;}
+/* sc-component-id: social-channel-list__StyledSocialChannels-sc-16w9pwh-0 */
+.YZAaE{list-style-type:none;margin:0;padding:0;}
+/* sc-component-id: social-channel-list__StyledSocialChannel-sc-16w9pwh-1 */
+.hLhzMS{display:inline-block;margin:0 10px;font-size:1.6em;opacity:.7;-webkit-transition:opacity .5s;transition:opacity .5s;} .hLhzMS:hover{opacity:1;}
+/* sc-component-id: bio__StyledBio-sc-19adui4-0 */
+.iHGPyz{margin:auto;text-align:center;width:100%;}
+/* sc-component-id: bio__AuthorDescription-sc-19adui4-1 */
+.lbetsi{margin:10px 0 13px;} .lbetsi a{color:#000;-webkit-text-decoration:underline;text-decoration:underline;}
+/* sc-component-id: bio__AuthorName-sc-19adui4-2 */
+.lfACiL{margin:10px;}
+/* sc-component-id: post__PostContainer-sc-h8gzap-0 */
+.gINVKO{width:1260px;margin-left:auto;margin-right:auto;max-width:100%;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;padding:0 !important;} @media (max-width:1300px){.gINVKO{padding:0 20px;}}
+/* sc-component-id: post__LeftSidebar-sc-h8gzap-1 */
+.vNDEa{min-width:255px;max-width:225px;-webkit-transition:opacity .5s,z-index .5s;transition:opacity .5s,z-index .5s;} @media (max-width:1300px){.vNDEa{position:fixed;opacity:0;z-index:-1;background-color:#fff;width:100% !important;max-width:100%;padding:0 20px;margin-top:-5px;height:calc(100vh - 70px);}}
+/* sc-component-id: post__PostContent-sc-h8gzap-2 */
+.jAIPIr{margin-top:-5px;border-right:1px #e5eff5 solid;border-left:1px #e5eff5 solid;background-color:#fff;box-shadow:0 0 3px rgba(0,0,0,.03),0 3px 46px rgba(0,0,0,.1);z-index:10;width:1035px;max-width:100%;} .jAIPIr li > a,.jAIPIr p > a{color:#11ABB6;border-bottom:2px #11ABB6 solid;} .jAIPIr pre{margin:30px 0;} .jAIPIr blockquote{border-left:4px #11ABB6 solid;background-color:#fafafa;margin:30px 0;padding:5px 20px;border-radius:.3em;} .jAIPIr h3::before,.jAIPIr h4::before,.jAIPIr h5::before,.jAIPIr h6::before{display:block;content:" ";height:90px;margin-top:-90px;visibility:hidden;} .jAIPIr h2{border-top:1px solid #ececec;margin-top:44px;padding-top:40px;line-height:1.2;} .jAIPIr code[class*="language-text"]{padding:5px;} .jAIPIr p > img{max-width:100%;border-radius:.3em;margin:30px 0;} .jAIPIr hr{border-top:1px solid #ececec;border-bottom:0;margin-top:44px;margin-bottom:40px;} .jAIPIr .gatsby-resp-image-link{margin:30px 0;max-width:100%;} .jAIPIr .gatsby-resp-image-link .gatsby-resp-image-image{border-radius:.3em;}
+/* sc-component-id: post__TocWrapper-sc-h8gzap-3 */
+.gkyoqc{position:-webkit-sticky;position:sticky;top:70px;padding:40px 30px 40px 0;}
+/* sc-component-id: post__PostHeader-sc-h8gzap-4 */
+.ihzMDK{padding:40px;} @media (max-width:576px){.ihzMDK{padding:20px;}}
+/* sc-component-id: post__FeaturedImage-sc-h8gzap-5 */
+.xRPUr{border-radius:0;} @media (max-width:1300px){.xRPUr{margin-left:-1px;margin-right:-1px;}}
+/* sc-component-id: post__StyledPost-sc-h8gzap-6 */
+.bKAqcy{padding:40px;} @media (max-width:576px){.bKAqcy{padding:20px;}}
+/* sc-component-id: post__PostMeta-sc-h8gzap-7 */
+.cxFkWP{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;opacity:.8;font-size:.9em;}
+/* sc-component-id: post__PostTitle-sc-h8gzap-8 */
+.ccWeoH{margin:0;padding:0;}
+/* sc-component-id: post__PostFooter-sc-h8gzap-9 */
+.cYqZmU{background-color:#fafafa;font-size:.8em;color:#666;padding:40px;line-height:1em;} .cYqZmU p{margin:5px 0;}
+/* sc-component-id: post__FooterTagLink-sc-h8gzap-10 */
+.bICWKm{color:#000 !important;-webkit-text-decoration:none;text-decoration:none;border-bottom:0 !important;}
+/* sc-component-id: post__PostAddition-sc-h8gzap-11 */
+.ghlSja{background-color:#fff;border-top:1px #e5eff5 solid;border-bottom:1px #e5eff5 solid;z-index:700;position:relative;padding:40px;}
+/* sc-component-id: post__PostAdditionContent-sc-h8gzap-12 */
+.jAnmWt{width:1260px;margin-left:auto;margin-right:auto;max-width:100%;display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-webkit-justify-content:space-between;-ms-flex-pack:justify;justify-content:space-between;} @media (max-width:1300px){.jAnmWt{padding:0 20px;}}
+/* sc-component-id: post__BioWrapper-sc-h8gzap-13 */
+.fZmyke{width:50%;margin:auto;} @media (max-width:576px){.fZmyke{width:100%;}}
+/* sc-component-id: post__ToggleTocButton-sc-h8gzap-14 */
+.knvKPj{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;position:fixed;-webkit-box-pack:center;-webkit-justify-content:center;-ms-flex-pack:center;justify-content:center;right:20px;bottom:20px;border-radius:100%;box-shadow:0 0 3px rgba(0,0,0,.03),0 3px 46px rgba(0,0,0,.1);border:0;z-index:5000;width:50px;height:50px;background-color:#20232a;color:#fff;outline:none;} @media (min-width:1300px){.knvKPj{display:none;}}</style><link rel="sitemap" type="application/xml" href="/sitemap.xml"/><link rel="icon" href="/favicon-32x32.png?v=aa125c22ab74279b6bcaff331ccf6be3" type="image/png"/><link rel="manifest" href="/manifest.webmanifest" crossorigin="anonymous"/><meta name="theme-color" content="#11ABB6"/><link rel="apple-touch-icon" sizes="48x48" href="/icons/icon-48x48.png?v=aa125c22ab74279b6bcaff331ccf6be3"/><link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png?v=aa125c22ab74279b6bcaff331ccf6be3"/><link rel="apple-touch-icon" sizes="96x96" href="/icons/icon-96x96.png?v=aa125c22ab74279b6bcaff331ccf6be3"/><link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png?v=aa125c22ab74279b6bcaff331ccf6be3"/><link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png?v=aa125c22ab74279b6bcaff331ccf6be3"/><link rel="apple-touch-icon" sizes="256x256" href="/icons/icon-256x256.png?v=aa125c22ab74279b6bcaff331ccf6be3"/><link rel="apple-touch-icon" sizes="384x384" href="/icons/icon-384x384.png?v=aa125c22ab74279b6bcaff331ccf6be3"/><link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png?v=aa125c22ab74279b6bcaff331ccf6be3"/><style type="text/css">
+    .anchor.before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform: translateX(-100%);
+      padding-right: 4px;
+    }
+    .anchor.after {
+      display: inline-block;
+      padding-left: 4px;
+    }
+    h1 .anchor svg,
+    h2 .anchor svg,
+    h3 .anchor svg,
+    h4 .anchor svg,
+    h5 .anchor svg,
+    h6 .anchor svg {
+      visibility: hidden;
+    }
+    h1:hover .anchor svg,
+    h2:hover .anchor svg,
+    h3:hover .anchor svg,
+    h4:hover .anchor svg,
+    h5:hover .anchor svg,
+    h6:hover .anchor svg,
+    h1 .anchor:focus svg,
+    h2 .anchor:focus svg,
+    h3 .anchor:focus svg,
+    h4 .anchor:focus svg,
+    h5 .anchor:focus svg,
+    h6 .anchor:focus svg {
+      visibility: visible;
+    }
+  </style><script>
+    document.addEventListener("DOMContentLoaded", function(event) {
+      var hash = window.decodeURI(location.hash.replace('#', ''))
+      if (hash !== '') {
+        var element = document.getElementById(hash)
+        if (element) {
+          var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+          var clientTop = document.documentElement.clientTop || document.body.clientTop || 0
+          var offset = element.getBoundingClientRect().top + scrollTop - clientTop
+          // Wait for the browser to finish rendering before scrolling.
+          setTimeout((function() {
+            window.scrollTo(0, offset - 0)
+          }), 0)
+        }
+      }
+    })
+  </script><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/rss.xml"/><link as="script" rel="preload" href="/webpack-runtime-a6fb0571f21923dc760f.js"/><link as="script" rel="preload" href="/framework-999a01e9e4c894cffffe.js"/><link as="script" rel="preload" href="/app-f87bd1ca1e3fef5860b4.js"/><link as="script" rel="preload" href="/styles-7d4153d260c0197f0043.js"/><link as="script" rel="preload" href="/1bfc9850-3de49fcd9cce71919e67.js"/><link as="script" rel="preload" href="/commons-2b189c38f90eef275b71.js"/><link as="script" rel="preload" href="/component---node-modules-nehalist-gatsby-theme-nehalem-src-templates-post-tsx-3b2e3e21f50839ebc5db.js"/><link as="fetch" rel="preload" href="/page-data\kubernetes-fundamentals\page-data.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data/sq/d/1116962356.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data/sq/d/2275848304.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data/sq/d/545095672.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data/sq/d/625280739.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data\app-data.json" crossorigin="anonymous"/></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" id="gatsby-focus-wrapper"><div class="style__NavContainer-sc-1ck1w82-0 bzOPpS"><div class="common__Container-sc-1d5kp8-0 style__Nav-sc-1ck1w82-1 kHKWRw"><a class="logo__HomeLink-sc-75wnhe-1 fNaZYs" href="/"><div class="logo__LogoImage-sc-75wnhe-0 gGoecn gatsby-image-wrapper" style="position:relative;overflow:hidden;display:inline-block;width:30px;height:30px"><img aria-hidden="true" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAACXBIWXMAAAsTAAALEwEAmpwYAAAFlUlEQVQ4y1VV609Tdxh+W3HsJmRBRTOnQZNl88Mic8qXbSYLGm8wgkjLpaUtvUgpvdJSREDxBlUuDjoBKaWUXuhpe04vp+3plUKBgRc0miwuWbKP+xf2ib3FZct+yZOek9PzvJfnfZ8D8M/pX38Jt56+QbyGm3itjq6AMb0JPdnnIHTTwHcGQRXNQQezhliFm5uvoS/3HPpXX0Dv8lP431FQSWicI+HHCQc0zPqAO0fuMqQ3YHt7G0k3CmX+xHGxjynXJdeL+7d+g67lZ8C1+thCT5TFsVHQ5KRBGcq8I+PcGgaxJwr8hSA02UiWyBWGeiTNkwndERC5Y5WXJhbGzg1bBnhOWiNYjMCnoh4WB/8jImIgcEfYCJAHMiDGe+Df/wkJ8YEzzG5xhEBOJve3uGjt8Ns/irpTq8UNc6S5apo4WmXxQLMjZJYFUuVw+ioIXHSrlExUSHxxQLB10VUQeeMAzfcegdTLsHSxHOiZ1QNVE/bBi49sQt5C4MHF4Zn+k4bBCsyWlc/4u/uTZbXTi9oGq2/88phVIHDSDzrC2VP5fqvoLEuM5NB0ZzRfLptnDwB/nuI020hj7dQiwJdnC2XOYIlgIVBfO+k01D1Z7BK4wtLu5PoR1lnehzxskdBF/9A0H7jNtweBbw+xOTYS4H72GVxHUdqpTIGU2YR2X9zUYPUfGshsHGm2EKPnh6bOndDd21fCVe6pNjtOStyRISOTu1A16QG5Lz564eFMSam4G2SeGMsYXwMw5bZ2xFEH0jD++vcPuFZyoGZ6sQQzHSnX3N3XNOOBY7IeHKVXe0WY1cNXb0HuZQY7gukvFL64XBvNfdNBpWAAE9shHN14kyfdrQmk6/EFMyp6RuFPVF2ZIWryBEp//IzUTVfL/QmTNpiua3WGQeyOlCkDae01L/MZZjzbQSZFSHawO7EO0BXOwvXIcpmCYB59rbtTJCUzoKFSXVIXXdobXeHKFoIquZs+qSJT13RU8uKNWG5gkFkuMNLLRg2Z2oPFsXSBtL4ztFSFANCQSdAFUkcV3vhYd+7FR43THtBSaSNGLjVQSa4+mFbq6eUqBZms0fjjl9rdkd4bzEqBNrTUJXJG9sCxStCHl3RKMlmFQQEafl4A0Yxnt9Ae4KiolNlAZ79X+RPVhtBSjQGnX+wInGr3MuNSIlqDIl0aXN2CgczmEbkvoe5LbxzQBDPTgnmq9eoMceDKNE4Hb9q9sxXtOOU9nujHNyLLA73hTElvJDtiyj7bq/LHQWolio43qXa1EVH4SjcERjp7W+IMf96XWGuVe2KnUST41vQE6i1eAKGFgDZcJ7EjVMAdtUGbJ2pqsvgOqd3hMuzZqDacqexbf1U89PJtsZZeOoEBbots5HmelQIVmRxRhzL7FaiDyEWz8j4ALSYztHkZNgLaiBinxR4woOKwub39nmSe3CuwkxyZN6aXEVEd3+aXVA9bDif/2n5fE0xDO06A3J+8pw6ikMEMe2eXa3tNIHeFWRI7Ba028mBXMD3YFc7w1P7E0HU62ze4snUqr2Qe489/PdzD5No7g+lHPbFcC4pxp2WOPC3GTZE6wqz6GQLdZmAE5FiywhNld2CPFO5wqcwR0lV0PyySWBY/UZNJs9yfOtpgWQQllRoXzpEn/sSeK4hYq8BGVbShsWDp7N7ELzsWCJe77kI72pcSS1b5GJYGSTvyqePJ/yo8sUpdKD1siGR7cS3VndiONTQLLW4HCgM41Gx9ZAX0aC51k+53niiZJUDjY8AYSoPOz+QD7KqbsAMUluAUOAulC9RxNIpyzmNHcaPdB3yrF7AlbJkrwupEMh29DLVjNiirFv3n2lzzAgjmfDu4+pMNhFYCmqcc0PjYDm0u9MlFGrhTTmjFT0Eezbjjl03TUDMyC+fvmv8l+xtDmeN6edJnrgAAAABJRU5ErkJggg==" alt="Personal Blog" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:1;transition-delay:500ms"/><noscript><picture><source srcset="/static/aa125c22ab74279b6bcaff331ccf6be3/91664/logo.png 1x,
+/static/aa125c22ab74279b6bcaff331ccf6be3/ad39b/logo.png 1.5x,
+/static/aa125c22ab74279b6bcaff331ccf6be3/183c2/logo.png 2x" /><img loading="lazy" width="30" height="30" srcset="/static/aa125c22ab74279b6bcaff331ccf6be3/91664/logo.png 1x,
+/static/aa125c22ab74279b6bcaff331ccf6be3/ad39b/logo.png 1.5x,
+/static/aa125c22ab74279b6bcaff331ccf6be3/183c2/logo.png 2x" src="/static/aa125c22ab74279b6bcaff331ccf6be3/91664/logo.png" alt="Personal Blog" style="position:absolute;top:0;left:0;opacity:1;width:100%;height:100%;object-fit:cover;object-position:center"/></picture></noscript></div></a><div class="style__NavWrapper-sc-1ck1w82-2 jLOYBk"><ul class="style__NavMenu-sc-1ck1w82-3 fVqyTA"><li class="style__NavMenuItem-sc-1ck1w82-4 gWrDHi"><a class="style__NavLink-sc-1ck1w82-5 MQpwo" href="/">Home</a></li><li class="style__NavMenuItem-sc-1ck1w82-4 gWrDHi"><a class="style__NavLink-sc-1ck1w82-5 MQpwo" href="/archive">Posts</a></li><li class="style__NavMenuItem-sc-1ck1w82-4 gWrDHi"><a class="style__NavLink-sc-1ck1w82-5 MQpwo" href="/tags">Tags</a></li></ul><div class="style__SearchContainer-sc-1ck1w82-6 llwmof"><ul class="style__NavMenu-sc-1ck1w82-3 cROOCp"><li class="style__NavMenuItem-sc-1ck1w82-4 gWrDHi"><button role="button" aria-label="Toggle search" class="style__ToggleSearchButton-sc-1ck1w82-7 fYiJFa"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path></svg></button></li></ul></div></div></div></div><main><div style="width:0%" color="#007acc" class="reading-progress__ReadingProgressBar-sc-vxjjnv-0 JoeLU"></div><div class="common__Container-sc-1d5kp8-0 post__PostContainer-sc-h8gzap-0 gINVKO"><div class="post__LeftSidebar-sc-h8gzap-1 vNDEa"><div class="post__TocWrapper-sc-h8gzap-3 gkyoqc"><nav class="toc__StyledNav-sc-1hwup8p-0 lhFcmu toc"></nav></div></div><button role="button" aria-label="Toggle table of contents" class="post__ToggleTocButton-sc-h8gzap-14 knvKPj"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M432 416H16a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-128H16a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-128H16a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-128H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z"></path></svg></button><div class="post__PostContent-sc-h8gzap-2 jAIPIr"><article class="post"><header class="post__PostHeader-sc-h8gzap-4 ihzMDK"><section class="post__PostMeta-sc-h8gzap-7 cxFkWP"><a href="/tag/technologies">Technologies</a><time dateTime="2022-02-12T00:00:00.000Z">12 February, 2022</time></section><h1 class="post__PostTitle-sc-h8gzap-8 ccWeoH">Kubernetes fundamentals</h1></header><div class="post__FeaturedImage-sc-h8gzap-5 xRPUr gatsby-image-wrapper" style="position:relative;overflow:hidden"><div aria-hidden="true" style="width:100%;padding-bottom:53.5%"></div><img aria-hidden="true" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAALCAIAAADwazoUAAAACXBIWXMAAAsTAAALEwEAmpwYAAABNUlEQVQoz2P4jw38+wci//79/+7L37//ECJogAGXzquPf+bOf+XU9LRw0eubz39h1Y+uGWLPtSc/7RqeRE9+MWPPx8hJL+wbn9x58Qsui1PzH7D8rD0fvTqeHbj2bfuFr/uvfnNre7r40Ce4LAHNBQtfp856uePC10PXv207/zVx+svyZW8Ia4bIAm3TLX3Yt/X9okOfuja91yt9dPzWd8LOBoYKMJCBYM6+j+Y1jy1rH1vUPF5y5BMk8IkIbaj7/z949fvey18PXv/+8xdrhGJofvXxD9Dy15/+/PiNcOLn73+//vwHdPM/XM6GSKw68Xnyjg9Af87e97F/2/t1p770bn3fv+0D0BfAIDh84xuyz9Ft/vLj3/P3f4D2v/kMIr/9+gckX3/6+/bznxcffn/4iuIBAMvUZiUF5NtBAAAAAElFTkSuQmCC" alt="" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:center;opacity:1;transition-delay:500ms"/><noscript><picture><source srcset="/static/582b2a32df399cc3f40ef62fd099e438/dc47e/cover.png 200w,
+/static/582b2a32df399cc3f40ef62fd099e438/9f2d5/cover.png 400w,
+/static/582b2a32df399cc3f40ef62fd099e438/1230c/cover.png 730w" sizes="(max-width: 730px) 100vw, 730px" /><img loading="lazy" sizes="(max-width: 730px) 100vw, 730px" srcset="/static/582b2a32df399cc3f40ef62fd099e438/dc47e/cover.png 200w,
+/static/582b2a32df399cc3f40ef62fd099e438/9f2d5/cover.png 400w,
+/static/582b2a32df399cc3f40ef62fd099e438/1230c/cover.png 730w" src="/static/582b2a32df399cc3f40ef62fd099e438/1230c/cover.png" alt="" style="position:absolute;top:0;left:0;opacity:1;width:100%;height:100%;object-fit:cover;object-position:center"/></picture></noscript></div><section class="post__StyledPost-sc-h8gzap-6 bKAqcy post"><style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    td, th {
+        border: 1px solid #dddddd;
+        padding: 8px;
+    }
+    th {
+        text-align: center;
+        background-color: #dddddd;
+    }
+    tr:nth-child(even) {
+        background-color: #ffffff;
+    }
+    tr:nth-child(odd) {
+        background-color: #efefef;
+    }
+    summary {
+        cursor: pointer;
+    }
+</style>
+<h2 id="introduction" style="position:relative;"><a href="#introduction" aria-label="introduction permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Introduction</h2>
+<p>Kubernetes (commonly abbreviated as k8s) is a <strong>container orchestration</strong> system that is designed to be easy to use and easy to deploy. As the "container orchestation" term suggests, Kubernetes relies on containers and offers an administration environment that focus on them. According to their docs:</p>
+<blockquote>
+<p>Kubernetes is a portable and extensible open source platform for managing workloads and services. Kubernetes facilitates automation and declarative configuration. It has a large and rapidly growing ecosystem. Support, tools and services for Kubernetes are widely available.</p>
+</blockquote>
+<p>Summing up, kubernetes offers a fully equiped administration environment for running multiple containers, which makes it the favourite choice when it comes to deploying microservices inside a <strong>cluster</strong>.</p>
+<h3 id="clusters" style="position:relative;"><a href="#clusters" aria-label="clusters permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Clusters</h3>
+<p>A Cluster is a set of <strong>nodes</strong> that run containerized applications. Kubernetes clusters allow containers to run across multiple machines and environments: virtual, physical, cloud-based, and on-premises. Kubernetes containers are not restricted to a specific operating system, unlike virtual machines. Instead, they are able to share operating systems and run anywhere.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 479px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/static/924c59ad7cfb1c94e8f4802c3a76ef0b/a9b70/cluster.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 74%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAACXBIWXMAAAsTAAALEwEAmpwYAAACQ0lEQVQ4y42U247TMBRF+/9fAO88wDcgJBBCAiR4qYaZ3pKmTaaTtLnZdeJbstkNdBpmisDtkV3FXdnnnG1PwNH3/WOch+k6uO7y+3EPP8N3tHc8Js9AvsO+ddgqg6Q1qLyDxxXw6H/j9QS/N2vXY68c1oVFmDuE0mAlNWalRtholJ2D+4uq8csmp4VoOmxOoL1FUGgsaoVt4ZBKqvM9YkKnlcCylRBawzmHXXbAfbq/phBIa4+IwIe8w5cqx8uHOb7dKcxixaceDVOf5hJzLZHpBs46FHxBuL1HFO+wZpzhE8/CJyVrVtoh3SC1eP1B4t1U49Unia/LFgmVBlS27jSy3l5Nt2MTB2Bre2zzE9AhFhbLg8H7oMGLVYTvDxKfYyqTR6zaIxaMtVEwTFk1LUqqzMsa2phLDYf6HQgjcFNZpI3DXBi8Sba4TRVuyyObQpg6ASUWTFs57styzIKIwArO+wtwz/qdgIPC2mIaM9WPgrPDj5wdVi3ClsHahbbB0imInjUsKqyiBILqKyEfoReFlcMqs9AswSIxeHsjEDGtX8BmAAaGs2vQdh5tSyvVAlUth7Sd85cu50c/2CYg8Nz+THj60GDL+kSncFTrNY69/7cPT4tUUOHBDv7bUe2yNNg0BFFJZDQCq1HQ3NdOyx8+PC8cDXxPaMQIGTGP36blC+i50Bqkzj4z8bXzPBk/aGyH6CAR5axfIeg/xZNTI1ENBpeNLoX/uhw8OzVbrXEzDzhH2NH907slsn1+gTy5TJ6Onx4Dho/gkBDxAAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="cluster"
+        title="cluster"
+        src="/static/924c59ad7cfb1c94e8f4802c3a76ef0b/a9b70/cluster.png"
+        srcset="/static/924c59ad7cfb1c94e8f4802c3a76ef0b/5a46d/cluster.png 300w,
+/static/924c59ad7cfb1c94e8f4802c3a76ef0b/a9b70/cluster.png 479w"
+        sizes="(max-width: 479px) 100vw, 479px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+      />
+  </a>
+    </span></p>
+<p>Clusters consists on a <strong>master node</strong> and a number of <strong>worker nodes</strong>. Nodes are independent machines with a number of cores and memory each which can run multiple containers. The master node controls the state of the cluster and is the origin of all task assignments, coordinating processses such as scheduling and scaling applications, maintaining the cluster state or implementeing updates.</p>
+<p>Worker nodes, on the other hand, are the nodes that perform the master's assignments. They operate as part of one system, orchestated by the master. Worker noeds can be virtual or physical machines.</p>
+<h3 id="single-node-clusters" style="position:relative;"><a href="#single-node-clusters" aria-label="single node clusters permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Single Node Clusters</h3>
+<p>Single node clusters are a popular solution for testing and development purposes. Since they consists on a single node, they are able to run in local machines where developers can work on their applications' development.</p>
+<p>Most used single node clusters are <a href="https://minikube.sigs.k8s.io/docs/start/">Minikube</a> and <a href="https://docs.docker.com/desktop/kubernetes/">Docker Kubernetes</a>. The last one comes installed with Docker Desktop so you only need to activate kubernetes from the settings.</p>
+<h3 id="kubernetes-cluster-structure" style="position:relative;"><a href="#kubernetes-cluster-structure" aria-label="kubernetes cluster structure permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Kubernetes Cluster Structure</h3>
+<p>A Kubernetes cluster contains six main components:</p>
+<ol>
+<li><strong>API server:</strong> Exposes a REST interface to all Kubernetes resources. Serves as the front end of the Kubernetes control plane.</li>
+<li><strong>Scheduler:</strong> Places containers according to resource requirements and metrics. Makes note of Pods with no assigned node, and selects nodes for them to run on.</li>
+<li><strong>Controller manager:</strong> Runs controller processes and reconciles the cluster’s actual state with its desired specifications. Manages controllers such as node controllers, endpoints controllers and replication controllers.</li>
+<li><strong>Kubelet:</strong> Ensures that containers are running in a Pod by interacting with the Docker engine , the default program for creating and managing containers. Takes a set of provided PodSpecs and ensures that their corresponding containers are fully operational.</li>
+<li><strong>Kube-proxy:</strong> Manages network connectivity and maintains network rules across nodes. Implements the Kubernetes Service concept across every node in a given cluster.</li>
+<li><strong>Etcd:</strong> Stores all cluster data. Consistent and highly available Kubernetes backing store. </li>
+</ol>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 1200px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/static/1cff3242811833ad24a683ff19209921/3c492/cluster-components.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 50.66666666666667%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAKCAIAAAA7N+mxAAAACXBIWXMAAAsTAAALEwEAmpwYAAABs0lEQVQoz4WSbY+aQBDH+f4fpknTNNe0sQ+ePSuKioA8uAIq4Mozu7C7qHgduNyLvuo/EzI77G9mMrOS4JyQKn4XvuA8zzlj9/v99X+S8qI0kbtQdc1ybOQuta1q2IcgbNsW+NtgIDgSSsF5PF7frIdxnLxo1mi21PdHdAwma+O7vFIdt2GNAOJ67a29pmkWBGFZlv9UppSmWRZG58vQNjhxksClrusAq2hN6obWDTQIZYqyInUNwYpQyCjVIEojHK/M3Xxjmnu/KPIsyyAc4ctct8aLte7stZ07XqgG8lQbQUQxbFrX0sCSU4QXW2emWTry8qKAXmgPY3ljTpYawKqFxvM1wGvTmSgbgOu66eGKkCTPszRNkhhjnOV5NbQNv6Yr7cPTt7my1B3349ef48nU2vufRs9fRj84FxITHJ/P01/PrGncUzgznD+6bSD/0XVCCM20X2TF9Xzk+eOpbFr9In7Lir41GWcS4zw8HGafn2ByQXQ2kbdFnns8QWXGGKFECA6jdnbIPx6Q68I44BVAU5xzSXABOVjbwlV4MNdhOwAMK33c3wW5urcPbP4GdgP/LxwGIwgCI9vOAAAAAElFTkSuQmCC'); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="cluster"
+        title="cluster"
+        src="/static/1cff3242811833ad24a683ff19209921/c1b63/cluster-components.png"
+        srcset="/static/1cff3242811833ad24a683ff19209921/5a46d/cluster-components.png 300w,
+/static/1cff3242811833ad24a683ff19209921/0a47e/cluster-components.png 600w,
+/static/1cff3242811833ad24a683ff19209921/c1b63/cluster-components.png 1200w,
+/static/1cff3242811833ad24a683ff19209921/3c492/cluster-components.png 1300w"
+        sizes="(max-width: 1200px) 100vw, 1200px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+      />
+  </a>
+    </span></p>
+<p>These six components can each run on Linux or as Docker containers (This is the case of Docker desktop kubernetes). The master node runs the <strong>Control Plane</strong> (API server, scheduler and controller manager), and the worker nodes run the kubelet and kube-proxy.</p>
+<blockquote>
+<p>kubernetes also provides an internal <strong>DNS server</strong> for registering services domain names, it is automatically included in the DNS requests made from the containers.</p>
+</blockquote>
+<h2 id="cli-commands" style="position:relative;"><a href="#cli-commands" aria-label="cli commands permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>CLI commands</h2>
+<blockquote>
+<p>This section does not cover the complete Kubernetes CLI documentation. Think of it as a quick reference cheat sheet for basic commands when managing your cluster. You can find the complete documentation <a href="https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands">here</a>.</p>
+</blockquote>
+<h3 id="basic-commands" style="position:relative;"><a href="#basic-commands" aria-label="basic commands permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Basic commands</h3>
+<ul>
+<li>
+<p><strong>Kubectl create</strong>:</p>
+<p>Create a resource from a file or from stdin.</p>
+<div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">$ kubectl create RESOURCE NAME [...PROPERTIES]</code></pre></div>
+<blockquote>
+<p>You can run <code class="language-text">kubectl api-resources</code> to see the different resources available. Check the <a href="#resources">Resources</a> sections for more information</p>
+</blockquote>
+</li>
+<li>
+<p><strong>Kubectl get</strong></p>
+<p>Display one or many resources.</p>
+<div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">$ kubectl get [(-o|--output=)json|yaml|name|go-template|go-template-file|template|templatefile|jsonpath|jsonpath-as-json|jsonpath-file|custom-columns-file|custom-columns|wide] (TYPE[.VERSION][.GROUP] [NAME | -l label] | TYPE[.VERSION][.GROUP]/NAME ...) [flags]</code></pre></div>
+<table>
+<thead>
+<tr>
+<th><strong>Option</strong></th>
+<th align="center"><strong>Shortcut</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Exampe</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--namespace</td>
+<td align="center">-n</td>
+<td>Specify the namespace to get resources from</td>
+<td><code class="language-text">Kubectl get pods --namespace=example</code></td>
+</tr>
+<tr>
+<td>--output</td>
+<td align="center">-o</td>
+<td>Output format</td>
+<td><code class="language-text">Kubectl get deployments -o json</code></td>
+</tr>
+</tbody>
+</table>
+<br>
+</li>
+<li>
+<p><strong>Kubectl describe</strong></p>
+<p>Show details of a specific resource. Print a detailed description of the selected resources, including related resources such as events or controllers. You may select a single object by name, all objects of that type, provide a name prefix, or label selector.</p>
+<div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">$ kubectl describe RESOURCE NAME</code></pre></div>
+<table>
+<thead>
+<tr>
+<th><strong>Option</strong></th>
+<th align="center"><strong>Shortcut</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Exampe</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--namespace</td>
+<td align="center">-n</td>
+<td>Specify the namespace to <br>get resources from</td>
+<td><code class="language-text">Kubectl describe pods --namespace=example</code></td>
+</tr>
+</tbody>
+</table>
+<br>
+</li>
+<li>
+<p><strong>Kubectl delete</strong></p>
+<p>Delete resources by file names, stdin, resources and names, or by resources and label selector.</p>
+<div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">$ kubectl delete ([-f FILENAME] | [-k DIRECTORY] | TYPE [(NAME | -l label | --all)])</code></pre></div>
+<table>
+<thead>
+<tr>
+<th><strong>Option</strong></th>
+<th align="center"><strong>Shortcut</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Exampe</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--namespace</td>
+<td align="center">-n</td>
+<td>Specify the namespace <br>to get resources from</td>
+<td><code class="language-text">Kubectl delete pods example --namespace=example</code></td>
+</tr>
+<tr>
+<td>--force</td>
+<td align="center"></td>
+<td>Forces the deletion of the resource</td>
+<td><code class="language-text">Kubectl delete pods example --force</code></td>
+</tr>
+<tr>
+<td>--selector</td>
+<td align="center">-l</td>
+<td>Label query to filter on</td>
+<td><code class="language-text">Kubectl delete pods --l key=value</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Deleting a namespace will also delete all objects in that namespace.</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="app-management" style="position:relative;"><a href="#app-management" aria-label="app management permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>App management</h3>
+<ul>
+<li>
+<p><strong>Kubectl apply</strong></p>
+<p>Apply a configuration to a resource by file (manifest) name or stdin. The resource name must be specified. This resource will be created if it doesn't exist yet.</p>
+<div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">$ kubectl apply (-f FILENAME | -k DIRECTORY)</code></pre></div>
+<blockquote>
+<p>Check the <a href="#manifests">Manifests</a> section to see the structure of the files.</p>
+</blockquote>
+</li>
+<li>
+<p><strong>Kubectl scale</strong></p>
+<p>Set a new size for a deployment, replica set, replication controller, or stateful set.</p>
+<div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">$ kubectl scale [--resource-version=version] [--current-replicas=count] --replicas=COUNT (-f FILENAME | TYPE NAME)</code></pre></div>
+</li>
+</ul>
+<h3 id="working-with-apps" style="position:relative;"><a href="#working-with-apps" aria-label="working with apps permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Working with apps</h3>
+<ul>
+<li>
+<p><strong>Kubectl exec</strong></p>
+<p>Execute a command in a container.</p>
+<div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">$ kubectl exec (POD | TYPE/NAME) [-c CONTAINER] [flags] -- COMMAND [args...]</code></pre></div>
+<table>
+<thead>
+<tr>
+<th><strong>Option</strong></th>
+<th align="center"><strong>Shortcut</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Exampe</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--container</td>
+<td align="center">-c</td>
+<td>Container name</td>
+<td><code class="language-text">kubectl exec example -c cname -- echo "hi"</code></td>
+</tr>
+<tr>
+<td>--stdin</td>
+<td align="center">-i</td>
+<td>Pass stdin to the container</td>
+<td><code class="language-text">Kubectl exec -i example -- echo "hi"</code></td>
+</tr>
+<tr>
+<td>--tty</td>
+<td align="center">-l</td>
+<td>Stdin is a TTY</td>
+<td><code class="language-text">Kubectl exec -t example -- echo "hi"</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Just like in docker, you can use -i &#x26; -t (-it) flags to launch an interactive shell inside the container.</p>
+</blockquote>
+</li>
+<li>
+<p><strong>Kubectl logs</strong></p>
+<p>Print the logs for a container in a pod or specified resource. If the pod has only one container, the container name is optional.</p>
+<div class="gatsby-highlight" data-language="text"><pre class="language-text"><code class="language-text">$ kubectl logs [-f] [-p] (POD | TYPE/NAME) [-c CONTAINER]</code></pre></div>
+<table>
+<thead>
+<tr>
+<th><strong>Option</strong></th>
+<th align="center"><strong>Shortcut</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Exampe</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>--container</td>
+<td align="center">-c</td>
+<td>Prints a container log</td>
+<td><code class="language-text">kubectl logs example -c cname</code></td>
+</tr>
+<tr>
+<td>--follow</td>
+<td align="center">-f</td>
+<td>Real time logs</td>
+<td><code class="language-text">kubectl logs -f example</code></td>
+</tr>
+<tr>
+<td>--tail</td>
+<td align="center"></td>
+<td>Print last X logs (default -1)</td>
+<td><code class="language-text">Kubectl logs --tail 100 example</code></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<h2 id="resources" style="position:relative;"><a href="#resources" aria-label="resources permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Resources</h2>
+<p>Every application running inside a kubernetes cluster is deployed by creating a set of resources that interact with each other and make the application accesible to the outside world.</p>
+<p>Those resources can be of many <strong>types</strong>, each one performs a specific task inside the cluster. They can be created declaratively through <strong>manifests</strong> files. There is not a certain number of resources, since they are retrieved from the Kubernetes API, which is extensible. However, Kubernetes natively provides a set of resources that are pre-defined in the endpoints of Kubernetes API, check the <a href="#kubernetes-api">Kubernetes API</a> section containing some of the most commonly used.</p>
+<blockquote>
+<p>A resource is an endpoint in the <strong>Kubernetes API</strong> that stores a collection of API objects of a certain kind; for example, the built-in pods resource contains a collection of Pod objects.</p>
+</blockquote>
+<h3 id="manifests" style="position:relative;"><a href="#manifests" aria-label="manifests permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Manifests</h3>
+<p>Manifests are files that describes the <strong>properties</strong> of a certain resource type. They can be written in <strong>YAML</strong> or <strong>JSON</strong> format, and vary depending on the resource type. Since many applications require multiple resources to be created, their properties can be simplified by writting the resources in the same file separated by <code class="language-text">---</code> lines. The following example shows how to deploy an nginx container in a pod with a LoadBalancer service to allow connections fron outside the cluster:</p>
+<div class="gatsby-highlight" data-language="yaml"><pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Service
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>nginx<span class="token punctuation">-</span>svc
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> nginx
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> LoadBalancer
+  <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+  <span class="token punctuation">-</span> <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">80</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> nginx
+<span class="token punctuation">---</span>
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> apps/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Deployment
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>nginx
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> nginx
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">3</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>
+      <span class="token key atrule">app</span><span class="token punctuation">:</span> nginx
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+      <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+        <span class="token key atrule">app</span><span class="token punctuation">:</span> nginx
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> nginx
+        <span class="token key atrule">image</span><span class="token punctuation">:</span> nginx<span class="token punctuation">:</span>1.14.2
+        <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">containerPort</span><span class="token punctuation">:</span> <span class="token number">80</span></code></pre></div>
+<p>Resources can be created through manifests using <code class="language-text">kubectl apply -f &lt;manifest></code> command.</p>
+<blockquote>
+<p>It is a recommended practice to put resources related to the same microservice or application tier into the same file, and to group all of the files associated with your application in the same directory. If the tiers of your application bind to each other using DNS, you can deploy all of the components of your stack together</p>
+</blockquote>
+<h3 id="kubernetes-api" style="position:relative;"><a href="#kubernetes-api" aria-label="kubernetes api permalink" class="anchor before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Kubernetes API</h3>
+<p>The kubernetes API provides a set of endpoints that allow you to interact with the resources in the cluster. The API is extensible, and new resources can be added to it. The following resources comes pre-defined in the Kubernetes API and are the most commonly used for any application deployment:</p>
+<details>
+<summary><b>&emsp;Pods</b></summary><div style="padding-left: 30px"> 
+<p>A pod is a collection of containers that are deployed on a node, it may be composed of only one container, or many directly connected containers in some advanced scenarios. Pods run inside a node of the cluster and most of the time are dynamically created by deployments.</p>
+<span class="gatsby-resp-image-wrapper" style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 1200px; ">
+      <a class="gatsby-resp-image-link" href="/static/105551703572486b458f86232924f5f7/4654d/pods.png" style="display: block" target="_blank" rel="noopener">
+    <span class="gatsby-resp-image-background-image" style="padding-bottom: 57.666666666666664%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAMCAYAAABiDJ37AAAACXBIWXMAABYlAAAWJQFJUiTwAAACF0lEQVQoz3WS3W/TMBTF+68jxAsgTYK/AAQv7AUhrWIrTOrDKAXWQtf1Q6xdWbs2SdV82LFjO+4O10m3lY9GOlIs/3x8j++t3Nzc4H/a9e3ib1UZDgbY1qDfR7/XgzEGw+EQ9XodjUYDrVYLYRjeMU5/n3WqOMgpcooicM4LrddrCCEwn88xnU7h+z6UUiXDWMHEcVye23g4VbajWDJZLBbwPB9Zpv6J7vatXSMIAmK8kinO3jMVVwlLEmQyhcokut0OvjQbSOIQRqtiT2uDNE0hBYdWGUXroUnMMvCRGw3GkqL6wjDPc4IFQm7xc3wFngF6DUymHuYBg6JFksQUXyJOLca/Zoh4DkuHr64DzBYhRGZpPy0Nrc0RxRyHHY3HVYZqK0VrJPGsxvHqRMAPFV3IKIHAh67Cg7cM704lWhcCT6oce+9TXC8zGCXvDVchR3OU43XT4mSoMJgp7J9aHHZzLCMy5IziCnwdGbz8bNG4yHE+kXjzLcc+yVtJeootwzCiCs8MHh5oVNsZvl8qPD3SePFJIwhLQ1fhcU/j0YFCtWPQphR7NY3nHxXmyz8MLeKEoT0xqP7QZKYx9gyOzjRVa7BKFI0Ig6CmdKcl49hLT6NGzPG5oWfJqOOiNHSj4TooUuqg5BQtLdaK/jPqKqOZc5MgpaRKHVOyYsMoWjvGNbcwvJsxqjQn2Y3yjbZncRfjLryd5d9Y0IjwBtAu7AAAAABJRU5ErkJggg=='); background-size: cover; display: block;"></span>
+  <img class="gatsby-resp-image-image" alt="pods" title="pods" src="/static/105551703572486b458f86232924f5f7/c1b63/pods.png" srcset="/static/105551703572486b458f86232924f5f7/5a46d/pods.png 300w,
+/static/105551703572486b458f86232924f5f7/0a47e/pods.png 600w,
+/static/105551703572486b458f86232924f5f7/c1b63/pods.png 1200w,
+/static/105551703572486b458f86232924f5f7/d61c2/pods.png 1800w,
+/static/105551703572486b458f86232924f5f7/4654d/pods.png 2392w" sizes="(max-width: 1200px) 100vw, 1200px" style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;" loading="lazy">
+  </a>
+    </span>
+<p>The following manifest file describes a pod that contains a single container running nginx:</p>
+<div class="gatsby-highlight" data-language="yaml"><pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Pod
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> static<span class="token punctuation">-</span>web
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> web
+      <span class="token key atrule">image</span><span class="token punctuation">:</span> nginx
+      <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+        <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> web
+          <span class="token key atrule">containerPort</span><span class="token punctuation">:</span> <span class="token number">80</span>
+          <span class="token key atrule">protocol</span><span class="token punctuation">:</span> TCP</code></pre></div>
+<blockquote>
+<p>Note that the apiVersion field indicates "v1". The apiVersion depends on the type of resource, run <code class="language-text">kubectl api-resources</code> to see the list of available resources and their api group.</p>
+</blockquote>
+</div>
+</details>
+<!-- ============================================================== -->
+<details>
+<summary><b>&emsp;ReplicaSet</b></summary><div style="padding-left: 30px"> 
+<p>The ReplicaSet manage a number of Pods and guarantees that a specified number of Pods are running at any given time. Despite being a step further than pods, ReplicaSets are not meant to be used directly, just like pods, since deployments are a higher level solution capable of manage ReplicaSets.</p>
+<div class="gatsby-highlight" data-language="yaml"><pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> apps/v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> ReplicaSet
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> example
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">replicas</span><span class="token punctuation">:</span> <span class="token number">3</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">matchLabels</span><span class="token punctuation">:</span>
+      <span class="token key atrule">tier</span><span class="token punctuation">:</span> example
+  <span class="token key atrule">template</span><span class="token punctuation">:</span>
+    <span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+      <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+        <span class="token key atrule">tier</span><span class="token punctuation">:</span> example
+    <span class="token key atrule">spec</span><span class="token punctuation">:</span>
+      <span class="token key atrule">containers</span><span class="token punctuation">:</span>
+      <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> example
+        <span class="token key atrule">image</span><span class="token punctuation">:</span> example/example</code></pre></div>
+<blockquote>
+<p>Note that ReplicaSet manifests are really similar to Pods'. They both include specs for the containers to be deployed, but ReplicaSets additionally includes a field for the replicas that will be created, and a selector to match other pods that could be managed.</p>
+</blockquote>
+</div></details>
+<!-- ============================================================== -->
+<details>
+<summary><b>&emsp;Deployments</b></summary><div style="padding-left: 30px"> 
+<p>The deployment resource manage Pods and ReplicaSets by providing declarative updates. It is a higher level resource than ReplicaSets, since it is able to manage them. ReplicaSet should not be managed directly, instead they are managed through the Deployment resource. Typical use cases for deployments include deploying ReplicaSets, declaring new state for Pods, roll back to previous state, horizontal scaling, etc.</p>
+<blockquote>
+<p>Deployments manifests file are the same as ReplicaSet manifests, but specifying the kind Deployment instead of ReplicaSet.</p>
+</blockquote>
+</div></details>
+<!-- ============================================================== -->
+<details>
+<summary><b>&emsp;Namespaces</b></summary><div style="padding-left: 30px"> 
+<p>Namespaces are used to organize resources in the cluster. They segregate resources into different namespaces, and provide isolation between different applications. Once a namespace is created, it can be used under the <code class="language-text">metadata.namespace</code> field of those resources which are namespaced (see <a href="https://kubernetes.io/docs/reference/kubectl/overview/#resource-types">kubernetes api-resources</a>).</p>
+<p>In order to create a new namespace, run:</p>
+<div class="gatsby-highlight" data-language="bash"><pre class="language-bash"><code class="language-bash">$ kubectl create namespace <span class="token operator">&lt;</span>namespace<span class="token operator">></span></code></pre></div>
+<blockquote>
+<p>When executing kubectl commands on namespaced resources, remember to add the <code class="language-text">-n</code> flag to specify the namespace. All namespaced resources are removed when the namespace is deleted.</p>
+</blockquote>
+</div></details>
+<!-- ============================================================== -->
+<details>
+<summary><b>&emsp;Services</b></summary><div style="padding-left: 30px"> 
+<p>Services describe how an application (a set of pods) is accessed, and how it is exposed to the outside world. Services can expose ports and even provide a load balancer. This way, service discovery is automatically provided by kubernetes, giving the pods its own IP address and a DNS name.</p>
+<p>Since pods are being destroyed and redeployed, there is no way to know which IP address each pod has at the time. That is why we use services.</p>
+<blockquote>
+<p>In Kubernetes, a Service is an abstraction which defines a logical set of Pods and a policy by which to access them (sometimes this pattern is called a micro-service). The set of Pods targeted by a Service is usually determined by a selector.</p>
+</blockquote>
+<p>A serice can be defined through this manifest file:</p>
+<div class="gatsby-highlight" data-language="yaml"><pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> Service
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> my<span class="token punctuation">-</span>service
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">type</span><span class="token punctuation">:</span> <span class="token punctuation">{</span><span class="token punctuation">{</span> ClusterIP <span class="token punctuation">|</span> NodePort <span class="token punctuation">|</span> LoadBalancer <span class="token punctuation">|</span> ExternalName <span class="token punctuation">}</span><span class="token punctuation">}</span>
+  <span class="token key atrule">selector</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> MyApp
+  <span class="token key atrule">ports</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> <span class="token key atrule">name</span><span class="token punctuation">:</span> http
+      <span class="token key atrule">protocol</span><span class="token punctuation">:</span> TCP
+      <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">80</span>
+      <span class="token key atrule">targetPort</span><span class="token punctuation">:</span> <span class="token number">1234</span>
+      <span class="token key atrule">nodePort</span><span class="token punctuation">:</span> <span class="token number">30000</span> <span class="token comment"># If type == NodePort</span></code></pre></div>
+<p>Depending on the type of service, the service can perform different tasks inside the cluster:</p>
+<ul>
+<li><strong>ClusterIP:</strong> Exposes the Service on a cluster-internal IP. Choosing this value makes the Service only reachable from within the cluster. This is the default <em>ServiceType</em>.</li>
+<li><strong>NodePort:</strong> Exposes the Service on each Node's IP at a static port (the NodePort). A ClusterIP Service, to which the NodePort Service routes, is automatically created. You'll be able to contact the NodePort Service, from outside the cluster, by requesting <code class="language-text">&lt;NodeIP>:&lt;NodePort></code>.</li>
+<li><strong>LoadBalancer:</strong> Exposes the Service externally using a cloud provider's load balancer. NodePort and ClusterIP Services, to which the external load balancer routes, are automatically created.</li>
+<li><strong>ExternalName:</strong> <em>(Needs Kube-dns >= 1.7 or CoreDNS >= 0.0.8)</em> Maps the Service to the contents of the externalName field (e.g. foo.bar.example.com), by returning a CNAME record with its value. No proxying of any kind is set up.</li>
+</ul>
+<blockquote>
+<p>Kubernetes by default restricts nodePort port range to 30000-32767. This behaviour can be configured by setting the <code class="language-text">--service-node-port-range</code> flag in the kubeapi-server.yaml file. In case you run a cluster locally with Docker, check <a href="https://stackoverflow.com/questions/64758012/location-of-kubernetes-config-directory-with-docker-desktop-on-windows">this site</a> to find where the kubeapi-server.yaml file is located.</p>
+</blockquote>
+<p>When declaring a service, we should know what ports are we going to use to connect our application to the service. That's why is important to know the differences between <code class="language-text">port</code>, <code class="language-text">targetPort</code> and <code class="language-text">nodePort</code> fields.</p>
+<ul>
+<li><strong>Port:</strong> Cluster port to which the service will be listening.</li>
+<li><strong>TargetPort:</strong> Port where the application inside a container is actually running.</li>
+<li><strong>NodePort:</strong> Port Mapping to be exposed outside the cluster.</li>
+</ul>
+<blockquote>
+<p><strong>Example:</strong> If we hace an app running on port 8080 on the container, and we specify Port = 8085, TargetPort = 8080 and NodePort = 30000, the service will be exposed outside the cluster at <code class="language-text">&lt;NodeIP>:30000</code>. Then, port 30000 will be mapped to service port 8085 and the service will redirect the traffic to the port 8080 of the container.</p>
+</blockquote>
+<p>The following picture sums up the behaviour of each service type.</p>
+<p><span
+      class="gatsby-resp-image-wrapper"
+      style="position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 1200px; "
+    >
+      <a
+    class="gatsby-resp-image-link"
+    href="/static/51a6b916384acbdafebe45707b84bc27/c1b63/services.png"
+    style="display: block"
+    target="_blank"
+    rel="noopener"
+  >
+    <span
+    class="gatsby-resp-image-background-image"
+    style="padding-bottom: 116.00000000000001%; position: relative; bottom: 0; left: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAXCAIAAACEf/j0AAAACXBIWXMAAAsTAAALEwEAmpwYAAADC0lEQVQ4y31UW08TQRjdP6vx8jOMxqiJUeKLBh80wUvQFzFQA0hABaQREEMtUEAorb1su7MzO7s7t/XMzNr2RSfbyVzOme92vgbFv4dxw6+1MUpplnApsSyEMlKZ4P9kpTVwShd5nuX2p7IsL0y+Wc+2G1mAZ0afs2Dn9kANqAYddsBUynyoksMLgatGW2Cd5jrNTZDLQqrySzMhpGXvNPJ6E1AjpMZzuLozO5zbYLhaqCa3Xw0Bw3mAizIqrYcxH/ksNU6s2x5AuUzSnNCE8QxrnCAcS4ZjGHun4spU/6hlL3CC85Ksy1gOmhawfyacJQsIhH3YXnYjMbtGIqbc1owtaw8wAypnV0kvEj6bIAZ49dMe3W2wQZwtVgc0EVs/6WaNGWtfozxYbOwn1TqNEwHAMM52jtjnH8zGnEtzY2Y485HVzsTVqfC0Ix/P03tvCJLvyQDdeR1NV1ijLa9MhUjksyV262XkYzbdCIWxqF8diYr1icKHqEqyLrANiULZ8TRmgHtEKS8SX+H1IzG9yreOhU+YNk5h2lr2Ga2eiOk1DpinWLebA9pzFerF6rAtQ6cNp0pLxPujLa4OWrIf2wwrJZTMgu9n3dPu0D0GGnyzrirnLmYJiblhvTTKadymkCeE0TCYVHLCs7/r8sRG/O8ReF1bDbGk0+lyziefmyTHMQ37IaVsTB4Jm6eCsSTNrMJQj/OejdaGoMfKJyRmPAfg8EIi805hzkn0QLOb+sSCfIKyOTJovucQazvMhVPcUUtAyJbspbt7nF960DtolpWYlKcH1M7F5Yd9tIDv3EltqzDK5jeHMYNX1uZkYziAJDR/vx6GUQpwqW34WdmiWwe8T+S7LxFJ1KcfyfL2WNswsryTrO9z9MzcRhwS+bXOF78lIFrLN19EMysMObj+KDzvySfz9P5bUkw0xt035GmF/urKa4/CRks+X2K3X0XSk2mqeW578PfQYpPMsNS3pCVjgS0OlQNgdgBt3R79ey3spg8q7MNe5vNhTPnvWcqgKOa20/sVtlIbA/4AFE0d+fp9tjwAAAAASUVORK5CYII='); background-size: cover; display: block;"
+  ></span>
+  <img
+        class="gatsby-resp-image-image"
+        alt="services"
+        title="services"
+        src="/static/51a6b916384acbdafebe45707b84bc27/c1b63/services.png"
+        srcset="/static/51a6b916384acbdafebe45707b84bc27/5a46d/services.png 300w,
+/static/51a6b916384acbdafebe45707b84bc27/0a47e/services.png 600w,
+/static/51a6b916384acbdafebe45707b84bc27/c1b63/services.png 1200w"
+        sizes="(max-width: 1200px) 100vw, 1200px"
+        style="width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;"
+        loading="lazy"
+      />
+  </a>
+    </span></p>
+</div></details>
+<!-- ============================================================== -->
+<details>
+<summary><b>&emsp;PersistentVolumes</b></summary><div style="padding-left: 30px"> 
+<p>A PersistentVolume (PV) is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using Storage Classes. It is a resource in the cluster just like a node is a cluster resource. PVs are volume plugins like Volumes, but have a lifecycle independent of any individual Pod that uses the PV. This API object captures the details of the implementation of the storage, be that NFS, iSCSI, or a cloud-provider-specific storage system.</p>
+<p>In order to be used, Persistent Volumes needs match a Persistent Volume Claim (PVC) so the space declared in the PV is claimed. This is called <strong>Static Provisioning</strong>. When none of the statically created PV match a PVC, the cluster try to <strong>dynamically provision</strong> a volume specially for the PVC.</p>
+<p>The following manifests describes a persistent volume that tries to bind to a PVC. This example shows how to <strong>Reserve a Persistent Volume</strong>, meaning that this PV will only bind to the PVC indicated in the claimRef field:</p>
+<div class="gatsby-highlight" data-language="yaml"><pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> PersistentVolume
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> foo<span class="token punctuation">-</span>pv
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">capacity</span><span class="token punctuation">:</span>
+    <span class="token key atrule">storage</span><span class="token punctuation">:</span> 5Gi
+  <span class="token key atrule">accessModes</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> ReadWriteOnce
+  <span class="token key atrule">storageClassName</span><span class="token punctuation">:</span> <span class="token string">""</span>
+  <span class="token key atrule">claimRef</span><span class="token punctuation">:</span>
+    <span class="token key atrule">name</span><span class="token punctuation">:</span> foo<span class="token punctuation">-</span>pvc
+    <span class="token key atrule">namespace</span><span class="token punctuation">:</span> foo</code></pre></div>
+<p><strong>Access Modes</strong> are an important field since it defines how the volume will be accessed:</p>
+<ul>
+<li><strong>ReadWriteOnce</strong>: The volume can be mounted as read-write by a single node.</li>
+<li><strong>ReadOnlyMany</strong>: The volume can be mounted by multiple nodes read-only.</li>
+<li>
+<p><strong>ReadWriteMany</strong>: The volume can be mounted by multiple nodes read-write.</p>
+</div></details>
+</li>
+</ul>
+<!-- ============================================================== -->
+<details>
+<summary><b>&emsp;PersistentVolumeClaim</b></summary><div style="padding-left: 30px"> 
+<blockquote>
+<p>Check the Persistent Volume section above for more information about Persistent Volumes.</p>
+</blockquote>
+<p>A <strong>PersistentVolumeClaim (PVC)</strong> is a request for storage by a user. It is similar to a Pod. Pods consume node resources and PVCs consume PV resources. Pods can request specific levels of resources (CPU and Memory). Claims can <strong>request specific size and access modes</strong>, but they doesn't really need the existence of a PV matching them, since the cluster will <strong>dynamically provision</strong> a new PV.</p>
+<p>The following example manifest will create a PVC requesting 20Gi of storage with <strong>ReadWriteOnce</strong> access mode, if any existing PV matches the requirements then they will be bound together, else a new PV will be dynamically provisioned.</p>
+<div class="gatsby-highlight" data-language="yaml"><pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">kind</span><span class="token punctuation">:</span> PersistentVolumeClaim
+<span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> simple<span class="token punctuation">-</span>db
+  <span class="token key atrule">namespace</span><span class="token punctuation">:</span> simple<span class="token punctuation">-</span>app
+  <span class="token key atrule">labels</span><span class="token punctuation">:</span>
+    <span class="token key atrule">app</span><span class="token punctuation">:</span> simple<span class="token punctuation">-</span>db
+<span class="token key atrule">spec</span><span class="token punctuation">:</span>
+  <span class="token key atrule">accessModes</span><span class="token punctuation">:</span>
+    <span class="token punctuation">-</span> ReadWriteOnce
+  <span class="token key atrule">resources</span><span class="token punctuation">:</span>
+    <span class="token key atrule">requests</span><span class="token punctuation">:</span>
+      <span class="token key atrule">storage</span><span class="token punctuation">:</span> 20Gi</code></pre></div>
+</div></details>
+<!-- ============================================================== -->
+<details>
+<summary><b>&emsp;ConfigMaps</b></summary><div style="padding-left: 30px"> 
+<p>A ConfigMap is an API object used to store non-confidential data in key-value pairs. Pods can consume ConfigMaps as environment variables, command-line arguments, or as configuration files in a volume.</p>
+<p>A ConfigMap allows you to decouple environment-specific configuration from your container images, so that your applications are easily portable.</p>
+<blockquote>
+<p><strong>Caution</strong>: ConfigMap does not provide secrecy or encryption. If the data you want to store are confidential, use a <strong>Secret</strong> rather than a ConfigMap, or use additional (third party) tools to keep your data private.</p>
+</blockquote>
+<p>You can write a Pod spec that refers to a ConfigMap and configures the container(s) in that Pod based on the data in the ConfigMap. The Pod and the ConfigMap must be in the same namespace.</p>
+<blockquote>
+<p><strong>Note</strong>: The spec of a static Pod cannot refer to a ConfigMap or any other API objects.</p>
+</blockquote>
+<p>Here's an example ConfigMap that has some keys with single values, and other keys where the value looks like a fragment of a configuration format.</p>
+<div class="gatsby-highlight" data-language="yaml"><pre class="language-yaml"><code class="language-yaml"><span class="token key atrule">apiVersion</span><span class="token punctuation">:</span> v1
+<span class="token key atrule">kind</span><span class="token punctuation">:</span> ConfigMap
+<span class="token key atrule">metadata</span><span class="token punctuation">:</span>
+  <span class="token key atrule">name</span><span class="token punctuation">:</span> game<span class="token punctuation">-</span>demo
+<span class="token key atrule">data</span><span class="token punctuation">:</span>
+  <span class="token comment"># property-like keys; each key maps to a simple value</span>
+  <span class="token key atrule">player_initial_lives</span><span class="token punctuation">:</span> <span class="token string">"3"</span>
+  <span class="token key atrule">ui_properties_file_name</span><span class="token punctuation">:</span> <span class="token string">"user-interface.properties"</span>
+
+  <span class="token comment"># file-like keys</span>
+  <span class="token key atrule">game.properties</span><span class="token punctuation">:</span> <span class="token punctuation">|</span><span class="token scalar string">
+    enemy.types=aliens,monsters
+    player.maximum-lives=5    </span>
+  <span class="token key atrule">user-interface.properties</span><span class="token punctuation">:</span> <span class="token punctuation">|</span><span class="token scalar string">
+    color.good=purple
+    color.bad=yellow
+    allow.textmode=true   </span></code></pre></div>
+<p>There are four different ways that you can use a <strong>ConfigMap</strong> to configure a container inside a Pod:</p>
+<ul>
+<li>Inside a container command and args</li>
+<li>Environment variables for a container</li>
+<li>Add a file in read-only volume, for the application to read</li>
+<li>Write code to run inside the Pod that uses the Kubernetes API to read a ConfigMap</li>
+</ul>
+<blockquote>
+<p><strong>Note:</strong> When ConfigMaps are configured as volumes mounted by pods, every key insde the config map will transform into a file in the directory where the volume is mounted.</p>
+</blockquote>
+</div></details>
+<!-- ============================================================== -->
+<details>
+<summary><b>&emsp;Secrets</b></summary><div style="padding-left: 30px"> 
+<p>Secrets are created the same way as configMaps, but they are used to store confidential data. Secrets don't show their data when <code class="language-text">kubectl get secret &lt;secret></code> is executed instead, they will show the codified data. Just like ConfigMaps, secrets can be configured inside a container command and args, as env variables or as files in a volume.</p>
+</div></details>
+<blockquote>
+<p>Check other resources API like <a href="https://projectcontour.io/docs/v1.19.1/">Project Contour</a> and <a href="https://cert-manager.io/docs">Cert-Manager</a> for managing reverse proxy, web sockets and HTTP over TLS Certificates.</p>
+</blockquote>
+<h2> Conclusion </h2>
+<p>This is the end of this post about kubernetes, eventhough it might seem pretty long, Kubernetes is a very powerful platform that extends <em>reeeeeaally</em> far beyond this post. Feel free to check out the <a href="https://kubernetes.io/docs/home/">Kubernetes documentation</a> and keep learning on one of the most used technologies world wide.</p></section><footer class="post__PostFooter-sc-h8gzap-9 cYqZmU"><p>Published under <span><a class="post__FooterTagLink-sc-h8gzap-10 bICWKm" href="/tag/technologies">Technologies</a>, </span><span><a class="post__FooterTagLink-sc-h8gzap-10 bICWKm" href="/tag/mid-level">Mid-level</a>, </span><span><a class="post__FooterTagLink-sc-h8gzap-10 bICWKm" href="/tag/kubernetes">Kubernetes</a></span> on <time dateTime="2022-02-12T00:00:00.000Z">12 February, 2022</time>.</p></footer></article></div></div><section class="post__PostAddition-sc-h8gzap-11 ghlSja"><div class="common__Container-sc-1d5kp8-0 post__PostAdditionContent-sc-h8gzap-12 jAnmWt"><div class="post__BioWrapper-sc-h8gzap-13 fZmyke"><section class="bio__StyledBio-sc-19adui4-0 iHGPyz"><img alt="alesancor1" style="max-width:55px;border-radius:100%;margin-right:20px;float:left" src="https://avatars.githubusercontent.com/alesancor1"/><h3 class="bio__AuthorName-sc-19adui4-2 lfACiL">alesancor1</h3><p class="bio__AuthorDescription-sc-19adui4-1 lbetsi">Welcome to my blog!</p><ul class="social-channel-list__StyledSocialChannels-sc-16w9pwh-0 YZAaE"><li class="social-channel-list__StyledSocialChannel-sc-16w9pwh-1 hLhzMS"><a href="https://www.linkedin.com/in/alesancor/" target="_blank" rel="noopener" aria-label="linkedin"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path></svg></a></li><li class="social-channel-list__StyledSocialChannel-sc-16w9pwh-1 hLhzMS"><a href="https://github.com/alesancor1" target="_blank" rel="noopener" aria-label="github"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 496 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"></path></svg></a></li></ul></section></div></div></section></main><footer class="style__StyledFooter-sc-1oqvjzu-0 gpDhwt"><div class="common__Container-sc-1d5kp8-0 style__FooterContainer-sc-1oqvjzu-1 ctpkkx"><nav class="style__StyledNav-sc-1oqvjzu-4 etXHUJ"><ul><li><a class="style__FooterMenuLink-sc-1oqvjzu-6 dLTgSL" href="/archive">Posts</a></li><li><a class="style__FooterMenuLink-sc-1oqvjzu-6 dLTgSL" href="/tags">Tags</a></li></ul></nav><div><p class="style__Copyright-sc-1oqvjzu-2 cXOFUh"><strong>Personal Blog</strong> © <!-- -->2022</p><p class="style__DesignBy-sc-1oqvjzu-3 bqPxdl">Theme by <a href="https://nehalist.io" target="_blank" rel="noopener">nehalist.io</a></p></div></div></footer></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/kubernetes-fundamentals";/*]]>*/</script><script id="gatsby-chunk-mapping">/*<![CDATA[*/window.___chunkMapping={"polyfill":["/polyfill-6345fe6c192448f369b8.js"],"app":["/app-f87bd1ca1e3fef5860b4.js"],"component---node-modules-nehalist-gatsby-theme-nehalem-src-pages-404-tsx":["/component---node-modules-nehalist-gatsby-theme-nehalem-src-pages-404-tsx-7c60f8995aafae9af341.js"],"component---node-modules-nehalist-gatsby-theme-nehalem-src-pages-archive-tsx":["/component---node-modules-nehalist-gatsby-theme-nehalem-src-pages-archive-tsx-57945304544f85d915e6.js"],"component---node-modules-nehalist-gatsby-theme-nehalem-src-pages-tags-tsx":["/component---node-modules-nehalist-gatsby-theme-nehalem-src-pages-tags-tsx-c1125b91fc9a10a7f6c7.js"],"component---node-modules-nehalist-gatsby-theme-nehalem-src-templates-page-tsx":["/component---node-modules-nehalist-gatsby-theme-nehalem-src-templates-page-tsx-65a2eb7e72da971bdec1.js"],"component---node-modules-nehalist-gatsby-theme-nehalem-src-templates-post-tsx":["/component---node-modules-nehalist-gatsby-theme-nehalem-src-templates-post-tsx-3b2e3e21f50839ebc5db.js"],"component---node-modules-nehalist-gatsby-theme-nehalem-src-templates-posts-tsx":["/component---node-modules-nehalist-gatsby-theme-nehalem-src-templates-posts-tsx-8b289a6c027c8ed7f316.js"],"component---node-modules-nehalist-gatsby-theme-nehalem-src-templates-tag-tsx":["/component---node-modules-nehalist-gatsby-theme-nehalem-src-templates-tag-tsx-c2071567154139543e29.js"]};/*]]>*/</script><script src="/polyfill-6345fe6c192448f369b8.js" nomodule=""></script><script src="/component---node-modules-nehalist-gatsby-theme-nehalem-src-templates-post-tsx-3b2e3e21f50839ebc5db.js" async=""></script><script src="/commons-2b189c38f90eef275b71.js" async=""></script><script src="/1bfc9850-3de49fcd9cce71919e67.js" async=""></script><script src="/styles-7d4153d260c0197f0043.js" async=""></script><script src="/app-f87bd1ca1e3fef5860b4.js" async=""></script><script src="/framework-999a01e9e4c894cffffe.js" async=""></script><script src="/webpack-runtime-a6fb0571f21923dc760f.js" async=""></script></body></html>

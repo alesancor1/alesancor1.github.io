@@ -1,4 +1,606 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[RSS Feed]]></title><description><![CDATA[A site for %TOPICS%]]></description><link>https://alesancor1.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sat, 12 Feb 2022 01:47:10 GMT</lastBuildDate><item><title><![CDATA[Creating a simple App with NodeJS, ExpressJS and MongoDB]]></title><description><![CDATA[Steps on how to create a simple NodeJS app, connect it to a MongoDB host, expose its data through ExpressJS server and build a Docker image from it.]]></description><link>https://alesancor1.github.io/create-simple-app</link><guid isPermaLink="false">https://alesancor1.github.io/create-simple-app</guid><pubDate>Fri, 11 Feb 2022 00:00:00 GMT</pubDate><content:encoded>&lt;blockquote&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[RSS Feed]]></title><description><![CDATA[A site for %TOPICS%]]></description><link>https://alesancor1.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 13 Feb 2022 00:33:57 GMT</lastBuildDate><item><title><![CDATA[Kubernetes fundamentals]]></title><description><![CDATA[A really brief introduction on the basics of Kubernetes: CLI commands, commonly used resources and basic cluster administration.]]></description><link>https://alesancor1.github.io/kubernetes-fundamentals</link><guid isPermaLink="false">https://alesancor1.github.io/kubernetes-fundamentals</guid><pubDate>Sat, 12 Feb 2022 00:00:00 GMT</pubDate><content:encoded>&lt;style&gt;
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    td, th {
+        border: 1px solid #dddddd;
+        padding: 8px;
+    }
+    th {
+        text-align: center;
+        background-color: #dddddd;
+    }
+    tr:nth-child(even) {
+        background-color: #ffffff;
+    }
+    tr:nth-child(odd) {
+        background-color: #efefef;
+    }
+    summary {
+        cursor: pointer;
+    }
+&lt;/style&gt;
+&lt;h2 id=&quot;introduction&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#introduction&quot; aria-label=&quot;introduction permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;Kubernetes (commonly abbreviated as k8s) is a &lt;strong&gt;container orchestration&lt;/strong&gt; system that is designed to be easy to use and easy to deploy. As the &quot;container orchestation&quot; term suggests, Kubernetes relies on containers and offers an administration environment that focus on them. According to their docs:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Kubernetes is a portable and extensible open source platform for managing workloads and services. Kubernetes facilitates automation and declarative configuration. It has a large and rapidly growing ecosystem. Support, tools and services for Kubernetes are widely available.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Summing up, kubernetes offers a fully equiped administration environment for running multiple containers, which makes it the favourite choice when it comes to deploying microservices inside a &lt;strong&gt;cluster&lt;/strong&gt;.&lt;/p&gt;
+&lt;h3 id=&quot;clusters&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#clusters&quot; aria-label=&quot;clusters permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Clusters&lt;/h3&gt;
+&lt;p&gt;A Cluster is a set of &lt;strong&gt;nodes&lt;/strong&gt; that run containerized applications. Kubernetes clusters allow containers to run across multiple machines and environments: virtual, physical, cloud-based, and on-premises. Kubernetes containers are not restricted to a specific operating system, unlike virtual machines. Instead, they are able to share operating systems and run anywhere.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 479px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/924c59ad7cfb1c94e8f4802c3a76ef0b/a9b70/cluster.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 74%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAACXBIWXMAAAsTAAALEwEAmpwYAAACQ0lEQVQ4y42U247TMBRF+/9fAO88wDcgJBBCAiR4qYaZ3pKmTaaTtLnZdeJbstkNdBpmisDtkV3FXdnnnG1PwNH3/WOch+k6uO7y+3EPP8N3tHc8Js9AvsO+ddgqg6Q1qLyDxxXw6H/j9QS/N2vXY68c1oVFmDuE0mAlNWalRtholJ2D+4uq8csmp4VoOmxOoL1FUGgsaoVt4ZBKqvM9YkKnlcCylRBawzmHXXbAfbq/phBIa4+IwIe8w5cqx8uHOb7dKcxixaceDVOf5hJzLZHpBs46FHxBuL1HFO+wZpzhE8/CJyVrVtoh3SC1eP1B4t1U49Unia/LFgmVBlS27jSy3l5Nt2MTB2Bre2zzE9AhFhbLg8H7oMGLVYTvDxKfYyqTR6zaIxaMtVEwTFk1LUqqzMsa2phLDYf6HQgjcFNZpI3DXBi8Sba4TRVuyyObQpg6ASUWTFs57styzIKIwArO+wtwz/qdgIPC2mIaM9WPgrPDj5wdVi3ClsHahbbB0imInjUsKqyiBILqKyEfoReFlcMqs9AswSIxeHsjEDGtX8BmAAaGs2vQdh5tSyvVAlUth7Sd85cu50c/2CYg8Nz+THj60GDL+kSncFTrNY69/7cPT4tUUOHBDv7bUe2yNNg0BFFJZDQCq1HQ3NdOyx8+PC8cDXxPaMQIGTGP36blC+i50Bqkzj4z8bXzPBk/aGyH6CAR5axfIeg/xZNTI1ENBpeNLoX/uhw8OzVbrXEzDzhH2NH907slsn1+gTy5TJ6Onx4Dho/gkBDxAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;cluster&quot;
+        title=&quot;cluster&quot;
+        src=&quot;/static/924c59ad7cfb1c94e8f4802c3a76ef0b/a9b70/cluster.png&quot;
+        srcset=&quot;/static/924c59ad7cfb1c94e8f4802c3a76ef0b/5a46d/cluster.png 300w,
+/static/924c59ad7cfb1c94e8f4802c3a76ef0b/a9b70/cluster.png 479w&quot;
+        sizes=&quot;(max-width: 479px) 100vw, 479px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Clusters consists on a &lt;strong&gt;master node&lt;/strong&gt; and a number of &lt;strong&gt;worker nodes&lt;/strong&gt;. Nodes are independent machines with a number of cores and memory each which can run multiple containers. The master node controls the state of the cluster and is the origin of all task assignments, coordinating processses such as scheduling and scaling applications, maintaining the cluster state or implementeing updates.&lt;/p&gt;
+&lt;p&gt;Worker nodes, on the other hand, are the nodes that perform the master&apos;s assignments. They operate as part of one system, orchestated by the master. Worker noeds can be virtual or physical machines.&lt;/p&gt;
+&lt;h3 id=&quot;single-node-clusters&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#single-node-clusters&quot; aria-label=&quot;single node clusters permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Single Node Clusters&lt;/h3&gt;
+&lt;p&gt;Single node clusters are a popular solution for testing and development purposes. Since they consists on a single node, they are able to run in local machines where developers can work on their applications&apos; development.&lt;/p&gt;
+&lt;p&gt;Most used single node clusters are &lt;a href=&quot;https://minikube.sigs.k8s.io/docs/start/&quot;&gt;Minikube&lt;/a&gt; and &lt;a href=&quot;https://docs.docker.com/desktop/kubernetes/&quot;&gt;Docker Kubernetes&lt;/a&gt;. The last one comes installed with Docker Desktop so you only need to activate kubernetes from the settings.&lt;/p&gt;
+&lt;h3 id=&quot;kubernetes-cluster-structure&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#kubernetes-cluster-structure&quot; aria-label=&quot;kubernetes cluster structure permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Kubernetes Cluster Structure&lt;/h3&gt;
+&lt;p&gt;A Kubernetes cluster contains six main components:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;API server:&lt;/strong&gt; Exposes a REST interface to all Kubernetes resources. Serves as the front end of the Kubernetes control plane.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Scheduler:&lt;/strong&gt; Places containers according to resource requirements and metrics. Makes note of Pods with no assigned node, and selects nodes for them to run on.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Controller manager:&lt;/strong&gt; Runs controller processes and reconciles the cluster’s actual state with its desired specifications. Manages controllers such as node controllers, endpoints controllers and replication controllers.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Kubelet:&lt;/strong&gt; Ensures that containers are running in a Pod by interacting with the Docker engine , the default program for creating and managing containers. Takes a set of provided PodSpecs and ensures that their corresponding containers are fully operational.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Kube-proxy:&lt;/strong&gt; Manages network connectivity and maintains network rules across nodes. Implements the Kubernetes Service concept across every node in a given cluster.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Etcd:&lt;/strong&gt; Stores all cluster data. Consistent and highly available Kubernetes backing store. &lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 1200px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/1cff3242811833ad24a683ff19209921/3c492/cluster-components.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 50.66666666666667%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAKCAIAAAA7N+mxAAAACXBIWXMAAAsTAAALEwEAmpwYAAABs0lEQVQoz4WSbY+aQBDH+f4fpknTNNe0sQ+ePSuKioA8uAIq4Mozu7C7qHgduNyLvuo/EzI77G9mMrOS4JyQKn4XvuA8zzlj9/v99X+S8qI0kbtQdc1ybOQuta1q2IcgbNsW+NtgIDgSSsF5PF7frIdxnLxo1mi21PdHdAwma+O7vFIdt2GNAOJ67a29pmkWBGFZlv9UppSmWRZG58vQNjhxksClrusAq2hN6obWDTQIZYqyInUNwYpQyCjVIEojHK/M3Xxjmnu/KPIsyyAc4ctct8aLte7stZ07XqgG8lQbQUQxbFrX0sCSU4QXW2emWTry8qKAXmgPY3ljTpYawKqFxvM1wGvTmSgbgOu66eGKkCTPszRNkhhjnOV5NbQNv6Yr7cPTt7my1B3349ef48nU2vufRs9fRj84FxITHJ/P01/PrGncUzgznD+6bSD/0XVCCM20X2TF9Xzk+eOpbFr9In7Lir41GWcS4zw8HGafn2ByQXQ2kbdFnns8QWXGGKFECA6jdnbIPx6Q68I44BVAU5xzSXABOVjbwlV4MNdhOwAMK33c3wW5urcPbP4GdgP/LxwGIwgCI9vOAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;cluster&quot;
+        title=&quot;cluster&quot;
+        src=&quot;/static/1cff3242811833ad24a683ff19209921/c1b63/cluster-components.png&quot;
+        srcset=&quot;/static/1cff3242811833ad24a683ff19209921/5a46d/cluster-components.png 300w,
+/static/1cff3242811833ad24a683ff19209921/0a47e/cluster-components.png 600w,
+/static/1cff3242811833ad24a683ff19209921/c1b63/cluster-components.png 1200w,
+/static/1cff3242811833ad24a683ff19209921/3c492/cluster-components.png 1300w&quot;
+        sizes=&quot;(max-width: 1200px) 100vw, 1200px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;These six components can each run on Linux or as Docker containers (This is the case of Docker desktop kubernetes). The master node runs the &lt;strong&gt;Control Plane&lt;/strong&gt; (API server, scheduler and controller manager), and the worker nodes run the kubelet and kube-proxy.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;kubernetes also provides an internal &lt;strong&gt;DNS server&lt;/strong&gt; for registering services domain names, it is automatically included in the DNS requests made from the containers.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;cli-commands&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#cli-commands&quot; aria-label=&quot;cli commands permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;CLI commands&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;This section does not cover the complete Kubernetes CLI documentation. Think of it as a quick reference cheat sheet for basic commands when managing your cluster. You can find the complete documentation &lt;a href=&quot;https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&quot;basic-commands&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#basic-commands&quot; aria-label=&quot;basic commands permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Basic commands&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Kubectl create&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;Create a resource from a file or from stdin.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$ kubectl create RESOURCE NAME [...PROPERTIES]&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;You can run &lt;code class=&quot;language-text&quot;&gt;kubectl api-resources&lt;/code&gt; to see the different resources available. Check the &lt;a href=&quot;#resources&quot;&gt;Resources&lt;/a&gt; sections for more information&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Kubectl get&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Display one or many resources.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$ kubectl get [(-o|--output=)json|yaml|name|go-template|go-template-file|template|templatefile|jsonpath|jsonpath-as-json|jsonpath-file|custom-columns-file|custom-columns|wide] (TYPE[.VERSION][.GROUP] [NAME | -l label] | TYPE[.VERSION][.GROUP]/NAME ...) [flags]&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Option&lt;/strong&gt;&lt;/th&gt;
+&lt;th align=&quot;center&quot;&gt;&lt;strong&gt;Shortcut&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Exampe&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;--namespace&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;-n&lt;/td&gt;
+&lt;td&gt;Specify the namespace to get resources from&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;Kubectl get pods --namespace=example&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;--output&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;-o&lt;/td&gt;
+&lt;td&gt;Output format&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;Kubectl get deployments -o json&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;br&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Kubectl describe&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Show details of a specific resource. Print a detailed description of the selected resources, including related resources such as events or controllers. You may select a single object by name, all objects of that type, provide a name prefix, or label selector.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$ kubectl describe RESOURCE NAME&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Option&lt;/strong&gt;&lt;/th&gt;
+&lt;th align=&quot;center&quot;&gt;&lt;strong&gt;Shortcut&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Exampe&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;--namespace&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;-n&lt;/td&gt;
+&lt;td&gt;Specify the namespace to &lt;br&gt;get resources from&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;Kubectl describe pods --namespace=example&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;br&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Kubectl delete&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Delete resources by file names, stdin, resources and names, or by resources and label selector.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$ kubectl delete ([-f FILENAME] | [-k DIRECTORY] | TYPE [(NAME | -l label | --all)])&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Option&lt;/strong&gt;&lt;/th&gt;
+&lt;th align=&quot;center&quot;&gt;&lt;strong&gt;Shortcut&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Exampe&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;--namespace&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;-n&lt;/td&gt;
+&lt;td&gt;Specify the namespace &lt;br&gt;to get resources from&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;Kubectl delete pods example --namespace=example&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;--force&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;&lt;/td&gt;
+&lt;td&gt;Forces the deletion of the resource&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;Kubectl delete pods example --force&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;--selector&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;-l&lt;/td&gt;
+&lt;td&gt;Label query to filter on&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;Kubectl delete pods --l key=value&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Deleting a namespace will also delete all objects in that namespace.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;app-management&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#app-management&quot; aria-label=&quot;app management permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;App management&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Kubectl apply&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Apply a configuration to a resource by file (manifest) name or stdin. The resource name must be specified. This resource will be created if it doesn&apos;t exist yet.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$ kubectl apply (-f FILENAME | -k DIRECTORY)&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Check the &lt;a href=&quot;#manifests&quot;&gt;Manifests&lt;/a&gt; section to see the structure of the files.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Kubectl scale&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Set a new size for a deployment, replica set, replication controller, or stateful set.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$ kubectl scale [--resource-version=version] [--current-replicas=count] --replicas=COUNT (-f FILENAME | TYPE NAME)&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;working-with-apps&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#working-with-apps&quot; aria-label=&quot;working with apps permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Working with apps&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Kubectl exec&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Execute a command in a container.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$ kubectl exec (POD | TYPE/NAME) [-c CONTAINER] [flags] -- COMMAND [args...]&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Option&lt;/strong&gt;&lt;/th&gt;
+&lt;th align=&quot;center&quot;&gt;&lt;strong&gt;Shortcut&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Exampe&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;--container&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;-c&lt;/td&gt;
+&lt;td&gt;Container name&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;kubectl exec example -c cname -- echo &quot;hi&quot;&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;--stdin&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;-i&lt;/td&gt;
+&lt;td&gt;Pass stdin to the container&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;Kubectl exec -i example -- echo &quot;hi&quot;&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;--tty&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;-l&lt;/td&gt;
+&lt;td&gt;Stdin is a TTY&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;Kubectl exec -t example -- echo &quot;hi&quot;&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Just like in docker, you can use -i &amp;#x26; -t (-it) flags to launch an interactive shell inside the container.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Kubectl logs&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Print the logs for a container in a pod or specified resource. If the pod has only one container, the container name is optional.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;$ kubectl logs [-f] [-p] (POD | TYPE/NAME) [-c CONTAINER]&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;&lt;strong&gt;Option&lt;/strong&gt;&lt;/th&gt;
+&lt;th align=&quot;center&quot;&gt;&lt;strong&gt;Shortcut&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;
+&lt;th&gt;&lt;strong&gt;Exampe&lt;/strong&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;--container&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;-c&lt;/td&gt;
+&lt;td&gt;Prints a container log&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;kubectl logs example -c cname&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;--follow&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;-f&lt;/td&gt;
+&lt;td&gt;Real time logs&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;kubectl logs -f example&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;--tail&lt;/td&gt;
+&lt;td align=&quot;center&quot;&gt;&lt;/td&gt;
+&lt;td&gt;Print last X logs (default -1)&lt;/td&gt;
+&lt;td&gt;&lt;code class=&quot;language-text&quot;&gt;Kubectl logs --tail 100 example&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;resources&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#resources&quot; aria-label=&quot;resources permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Resources&lt;/h2&gt;
+&lt;p&gt;Every application running inside a kubernetes cluster is deployed by creating a set of resources that interact with each other and make the application accesible to the outside world.&lt;/p&gt;
+&lt;p&gt;Those resources can be of many &lt;strong&gt;types&lt;/strong&gt;, each one performs a specific task inside the cluster. They can be created declaratively through &lt;strong&gt;manifests&lt;/strong&gt; files. There is not a certain number of resources, since they are retrieved from the Kubernetes API, which is extensible. However, Kubernetes natively provides a set of resources that are pre-defined in the endpoints of Kubernetes API, check the &lt;a href=&quot;#kubernetes-api&quot;&gt;Kubernetes API&lt;/a&gt; section containing some of the most commonly used.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;A resource is an endpoint in the &lt;strong&gt;Kubernetes API&lt;/strong&gt; that stores a collection of API objects of a certain kind; for example, the built-in pods resource contains a collection of Pod objects.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&quot;manifests&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#manifests&quot; aria-label=&quot;manifests permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Manifests&lt;/h3&gt;
+&lt;p&gt;Manifests are files that describes the &lt;strong&gt;properties&lt;/strong&gt; of a certain resource type. They can be written in &lt;strong&gt;YAML&lt;/strong&gt; or &lt;strong&gt;JSON&lt;/strong&gt; format, and vary depending on the resource type. Since many applications require multiple resources to be created, their properties can be simplified by writting the resources in the same file separated by &lt;code class=&quot;language-text&quot;&gt;---&lt;/code&gt; lines. The following example shows how to deploy an nginx container in a pod with a LoadBalancer service to allow connections fron outside the cluster:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;yaml&quot;&gt;&lt;pre class=&quot;language-yaml&quot;&gt;&lt;code class=&quot;language-yaml&quot;&gt;&lt;span class=&quot;token key atrule&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; v1
+&lt;span class=&quot;token key atrule&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; Service
+&lt;span class=&quot;token key atrule&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; my&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt;nginx&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt;svc
+  &lt;span class=&quot;token key atrule&quot;&gt;labels&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token key atrule&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; nginx
+&lt;span class=&quot;token key atrule&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; LoadBalancer
+  &lt;span class=&quot;token key atrule&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;token key atrule&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;80&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token key atrule&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; nginx
+&lt;span class=&quot;token punctuation&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;token key atrule&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; apps/v1
+&lt;span class=&quot;token key atrule&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; Deployment
+&lt;span class=&quot;token key atrule&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; my&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt;nginx
+  &lt;span class=&quot;token key atrule&quot;&gt;labels&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token key atrule&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; nginx
+&lt;span class=&quot;token key atrule&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;replicas&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;3&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token key atrule&quot;&gt;matchLabels&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;token key atrule&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; nginx
+  &lt;span class=&quot;token key atrule&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token key atrule&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;token key atrule&quot;&gt;labels&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;token key atrule&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; nginx
+    &lt;span class=&quot;token key atrule&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;token key atrule&quot;&gt;containers&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; nginx
+        &lt;span class=&quot;token key atrule&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; nginx&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;1.14.2
+        &lt;span class=&quot;token key atrule&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;token key atrule&quot;&gt;containerPort&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;80&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Resources can be created through manifests using &lt;code class=&quot;language-text&quot;&gt;kubectl apply -f &amp;lt;manifest&gt;&lt;/code&gt; command.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;It is a recommended practice to put resources related to the same microservice or application tier into the same file, and to group all of the files associated with your application in the same directory. If the tiers of your application bind to each other using DNS, you can deploy all of the components of your stack together&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&quot;kubernetes-api&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#kubernetes-api&quot; aria-label=&quot;kubernetes api permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Kubernetes API&lt;/h3&gt;
+&lt;p&gt;The kubernetes API provides a set of endpoints that allow you to interact with the resources in the cluster. The API is extensible, and new resources can be added to it. The following resources comes pre-defined in the Kubernetes API and are the most commonly used for any application deployment:&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;b&gt;&amp;emsp;Pods&lt;/b&gt;&lt;/summary&gt;&lt;div style=&quot;padding-left: 30px&quot;&gt; 
+&lt;p&gt;A pod is a collection of containers that are deployed on a node, it may be composed of only one container, or many directly connected containers in some advanced scenarios. Pods run inside a node of the cluster and most of the time are dynamically created by deployments.&lt;/p&gt;
+&lt;span class=&quot;gatsby-resp-image-wrapper&quot; style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 1200px; &quot;&gt;
+      &lt;a class=&quot;gatsby-resp-image-link&quot; href=&quot;/static/105551703572486b458f86232924f5f7/4654d/pods.png&quot; style=&quot;display: block&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;
+    &lt;span class=&quot;gatsby-resp-image-background-image&quot; style=&quot;padding-bottom: 57.666666666666664%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAMCAYAAABiDJ37AAAACXBIWXMAABYlAAAWJQFJUiTwAAACF0lEQVQoz3WS3W/TMBTF+68jxAsgTYK/AAQv7AUhrWIrTOrDKAXWQtf1Q6xdWbs2SdV82LFjO+4O10m3lY9GOlIs/3x8j++t3Nzc4H/a9e3ib1UZDgbY1qDfR7/XgzEGw+EQ9XodjUYDrVYLYRjeMU5/n3WqOMgpcooicM4LrddrCCEwn88xnU7h+z6UUiXDWMHEcVye23g4VbajWDJZLBbwPB9Zpv6J7vatXSMIAmK8kinO3jMVVwlLEmQyhcokut0OvjQbSOIQRqtiT2uDNE0hBYdWGUXroUnMMvCRGw3GkqL6wjDPc4IFQm7xc3wFngF6DUymHuYBg6JFksQUXyJOLca/Zoh4DkuHr64DzBYhRGZpPy0Nrc0RxRyHHY3HVYZqK0VrJPGsxvHqRMAPFV3IKIHAh67Cg7cM704lWhcCT6oce+9TXC8zGCXvDVchR3OU43XT4mSoMJgp7J9aHHZzLCMy5IziCnwdGbz8bNG4yHE+kXjzLcc+yVtJeootwzCiCs8MHh5oVNsZvl8qPD3SePFJIwhLQ1fhcU/j0YFCtWPQphR7NY3nHxXmyz8MLeKEoT0xqP7QZKYx9gyOzjRVa7BKFI0Ig6CmdKcl49hLT6NGzPG5oWfJqOOiNHSj4TooUuqg5BQtLdaK/jPqKqOZc5MgpaRKHVOyYsMoWjvGNbcwvJsxqjQn2Y3yjbZncRfjLryd5d9Y0IjwBtAu7AAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;&gt;&lt;/span&gt;
+  &lt;img class=&quot;gatsby-resp-image-image&quot; alt=&quot;pods&quot; title=&quot;pods&quot; src=&quot;/static/105551703572486b458f86232924f5f7/c1b63/pods.png&quot; srcset=&quot;/static/105551703572486b458f86232924f5f7/5a46d/pods.png 300w,
+/static/105551703572486b458f86232924f5f7/0a47e/pods.png 600w,
+/static/105551703572486b458f86232924f5f7/c1b63/pods.png 1200w,
+/static/105551703572486b458f86232924f5f7/d61c2/pods.png 1800w,
+/static/105551703572486b458f86232924f5f7/4654d/pods.png 2392w&quot; sizes=&quot;(max-width: 1200px) 100vw, 1200px&quot; style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot; loading=&quot;lazy&quot;&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;
+&lt;p&gt;The following manifest file describes a pod that contains a single container running nginx:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;yaml&quot;&gt;&lt;pre class=&quot;language-yaml&quot;&gt;&lt;code class=&quot;language-yaml&quot;&gt;&lt;span class=&quot;token key atrule&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; v1
+&lt;span class=&quot;token key atrule&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; Pod
+&lt;span class=&quot;token key atrule&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; static&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt;web
+&lt;span class=&quot;token key atrule&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;containers&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; web
+      &lt;span class=&quot;token key atrule&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; nginx
+      &lt;span class=&quot;token key atrule&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; web
+          &lt;span class=&quot;token key atrule&quot;&gt;containerPort&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;80&lt;/span&gt;
+          &lt;span class=&quot;token key atrule&quot;&gt;protocol&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; TCP&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note that the apiVersion field indicates &quot;v1&quot;. The apiVersion depends on the type of resource, run &lt;code class=&quot;language-text&quot;&gt;kubectl api-resources&lt;/code&gt; to see the list of available resources and their api group.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;!-- ============================================================== --&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;b&gt;&amp;emsp;ReplicaSet&lt;/b&gt;&lt;/summary&gt;&lt;div style=&quot;padding-left: 30px&quot;&gt; 
+&lt;p&gt;The ReplicaSet manage a number of Pods and guarantees that a specified number of Pods are running at any given time. Despite being a step further than pods, ReplicaSets are not meant to be used directly, just like pods, since deployments are a higher level solution capable of manage ReplicaSets.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;yaml&quot;&gt;&lt;pre class=&quot;language-yaml&quot;&gt;&lt;code class=&quot;language-yaml&quot;&gt;&lt;span class=&quot;token key atrule&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; apps/v1
+&lt;span class=&quot;token key atrule&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; ReplicaSet
+&lt;span class=&quot;token key atrule&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; example
+&lt;span class=&quot;token key atrule&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;replicas&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;3&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token key atrule&quot;&gt;matchLabels&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;token key atrule&quot;&gt;tier&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; example
+  &lt;span class=&quot;token key atrule&quot;&gt;template&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token key atrule&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;token key atrule&quot;&gt;labels&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;token key atrule&quot;&gt;tier&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; example
+    &lt;span class=&quot;token key atrule&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;token key atrule&quot;&gt;containers&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; example
+        &lt;span class=&quot;token key atrule&quot;&gt;image&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; example/example&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Note that ReplicaSet manifests are really similar to Pods&apos;. They both include specs for the containers to be deployed, but ReplicaSets additionally includes a field for the replicas that will be created, and a selector to match other pods that could be managed.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;&lt;/details&gt;
+&lt;!-- ============================================================== --&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;b&gt;&amp;emsp;Deployments&lt;/b&gt;&lt;/summary&gt;&lt;div style=&quot;padding-left: 30px&quot;&gt; 
+&lt;p&gt;The deployment resource manage Pods and ReplicaSets by providing declarative updates. It is a higher level resource than ReplicaSets, since it is able to manage them. ReplicaSet should not be managed directly, instead they are managed through the Deployment resource. Typical use cases for deployments include deploying ReplicaSets, declaring new state for Pods, roll back to previous state, horizontal scaling, etc.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Deployments manifests file are the same as ReplicaSet manifests, but specifying the kind Deployment instead of ReplicaSet.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;&lt;/details&gt;
+&lt;!-- ============================================================== --&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;b&gt;&amp;emsp;Namespaces&lt;/b&gt;&lt;/summary&gt;&lt;div style=&quot;padding-left: 30px&quot;&gt; 
+&lt;p&gt;Namespaces are used to organize resources in the cluster. They segregate resources into different namespaces, and provide isolation between different applications. Once a namespace is created, it can be used under the &lt;code class=&quot;language-text&quot;&gt;metadata.namespace&lt;/code&gt; field of those resources which are namespaced (see &lt;a href=&quot;https://kubernetes.io/docs/reference/kubectl/overview/#resource-types&quot;&gt;kubernetes api-resources&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;In order to create a new namespace, run:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;bash&quot;&gt;&lt;pre class=&quot;language-bash&quot;&gt;&lt;code class=&quot;language-bash&quot;&gt;$ kubectl create namespace &lt;span class=&quot;token operator&quot;&gt;&amp;lt;&lt;/span&gt;namespace&lt;span class=&quot;token operator&quot;&gt;&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;blockquote&gt;
+&lt;p&gt;When executing kubectl commands on namespaced resources, remember to add the &lt;code class=&quot;language-text&quot;&gt;-n&lt;/code&gt; flag to specify the namespace. All namespaced resources are removed when the namespace is deleted.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;&lt;/details&gt;
+&lt;!-- ============================================================== --&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;b&gt;&amp;emsp;Services&lt;/b&gt;&lt;/summary&gt;&lt;div style=&quot;padding-left: 30px&quot;&gt; 
+&lt;p&gt;Services describe how an application (a set of pods) is accessed, and how it is exposed to the outside world. Services can expose ports and even provide a load balancer. This way, service discovery is automatically provided by kubernetes, giving the pods its own IP address and a DNS name.&lt;/p&gt;
+&lt;p&gt;Since pods are being destroyed and redeployed, there is no way to know which IP address each pod has at the time. That is why we use services.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;In Kubernetes, a Service is an abstraction which defines a logical set of Pods and a policy by which to access them (sometimes this pattern is called a micro-service). The set of Pods targeted by a Service is usually determined by a selector.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;A serice can be defined through this manifest file:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;yaml&quot;&gt;&lt;pre class=&quot;language-yaml&quot;&gt;&lt;code class=&quot;language-yaml&quot;&gt;&lt;span class=&quot;token key atrule&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; v1
+&lt;span class=&quot;token key atrule&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; Service
+&lt;span class=&quot;token key atrule&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; my&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt;service
+&lt;span class=&quot;token key atrule&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;{&lt;/span&gt; ClusterIP &lt;span class=&quot;token punctuation&quot;&gt;|&lt;/span&gt; NodePort &lt;span class=&quot;token punctuation&quot;&gt;|&lt;/span&gt; LoadBalancer &lt;span class=&quot;token punctuation&quot;&gt;|&lt;/span&gt; ExternalName &lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;selector&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token key atrule&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; MyApp
+  &lt;span class=&quot;token key atrule&quot;&gt;ports&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; http
+      &lt;span class=&quot;token key atrule&quot;&gt;protocol&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; TCP
+      &lt;span class=&quot;token key atrule&quot;&gt;port&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;80&lt;/span&gt;
+      &lt;span class=&quot;token key atrule&quot;&gt;targetPort&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;1234&lt;/span&gt;
+      &lt;span class=&quot;token key atrule&quot;&gt;nodePort&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token number&quot;&gt;30000&lt;/span&gt; &lt;span class=&quot;token comment&quot;&gt;# If type == NodePort&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;Depending on the type of service, the service can perform different tasks inside the cluster:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ClusterIP:&lt;/strong&gt; Exposes the Service on a cluster-internal IP. Choosing this value makes the Service only reachable from within the cluster. This is the default &lt;em&gt;ServiceType&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;NodePort:&lt;/strong&gt; Exposes the Service on each Node&apos;s IP at a static port (the NodePort). A ClusterIP Service, to which the NodePort Service routes, is automatically created. You&apos;ll be able to contact the NodePort Service, from outside the cluster, by requesting &lt;code class=&quot;language-text&quot;&gt;&amp;lt;NodeIP&gt;:&amp;lt;NodePort&gt;&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;LoadBalancer:&lt;/strong&gt; Exposes the Service externally using a cloud provider&apos;s load balancer. NodePort and ClusterIP Services, to which the external load balancer routes, are automatically created.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ExternalName:&lt;/strong&gt; &lt;em&gt;(Needs Kube-dns &gt;= 1.7 or CoreDNS &gt;= 0.0.8)&lt;/em&gt; Maps the Service to the contents of the externalName field (e.g. foo.bar.example.com), by returning a CNAME record with its value. No proxying of any kind is set up.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Kubernetes by default restricts nodePort port range to 30000-32767. This behaviour can be configured by setting the &lt;code class=&quot;language-text&quot;&gt;--service-node-port-range&lt;/code&gt; flag in the kubeapi-server.yaml file. In case you run a cluster locally with Docker, check &lt;a href=&quot;https://stackoverflow.com/questions/64758012/location-of-kubernetes-config-directory-with-docker-desktop-on-windows&quot;&gt;this site&lt;/a&gt; to find where the kubeapi-server.yaml file is located.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;When declaring a service, we should know what ports are we going to use to connect our application to the service. That&apos;s why is important to know the differences between &lt;code class=&quot;language-text&quot;&gt;port&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;targetPort&lt;/code&gt; and &lt;code class=&quot;language-text&quot;&gt;nodePort&lt;/code&gt; fields.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Port:&lt;/strong&gt; Cluster port to which the service will be listening.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;TargetPort:&lt;/strong&gt; Port where the application inside a container is actually running.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;NodePort:&lt;/strong&gt; Port Mapping to be exposed outside the cluster.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Example:&lt;/strong&gt; If we hace an app running on port 8080 on the container, and we specify Port = 8085, TargetPort = 8080 and NodePort = 30000, the service will be exposed outside the cluster at &lt;code class=&quot;language-text&quot;&gt;&amp;lt;NodeIP&gt;:30000&lt;/code&gt;. Then, port 30000 will be mapped to service port 8085 and the service will redirect the traffic to the port 8080 of the container.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;The following picture sums up the behaviour of each service type.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 1200px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/51a6b916384acbdafebe45707b84bc27/c1b63/services.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 116.00000000000001%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAXCAIAAACEf/j0AAAACXBIWXMAAAsTAAALEwEAmpwYAAADC0lEQVQ4y31UW08TQRjdP6vx8jOMxqiJUeKLBh80wUvQFzFQA0hABaQREEMtUEAorb1su7MzO7s7t/XMzNr2RSfbyVzOme92vgbFv4dxw6+1MUpplnApsSyEMlKZ4P9kpTVwShd5nuX2p7IsL0y+Wc+2G1mAZ0afs2Dn9kANqAYddsBUynyoksMLgatGW2Cd5jrNTZDLQqrySzMhpGXvNPJ6E1AjpMZzuLozO5zbYLhaqCa3Xw0Bw3mAizIqrYcxH/ksNU6s2x5AuUzSnNCE8QxrnCAcS4ZjGHun4spU/6hlL3CC85Ksy1gOmhawfyacJQsIhH3YXnYjMbtGIqbc1owtaw8wAypnV0kvEj6bIAZ49dMe3W2wQZwtVgc0EVs/6WaNGWtfozxYbOwn1TqNEwHAMM52jtjnH8zGnEtzY2Y485HVzsTVqfC0Ix/P03tvCJLvyQDdeR1NV1ijLa9MhUjksyV262XkYzbdCIWxqF8diYr1icKHqEqyLrANiULZ8TRmgHtEKS8SX+H1IzG9yreOhU+YNk5h2lr2Ga2eiOk1DpinWLebA9pzFerF6rAtQ6cNp0pLxPujLa4OWrIf2wwrJZTMgu9n3dPu0D0GGnyzrirnLmYJiblhvTTKadymkCeE0TCYVHLCs7/r8sRG/O8ReF1bDbGk0+lyziefmyTHMQ37IaVsTB4Jm6eCsSTNrMJQj/OejdaGoMfKJyRmPAfg8EIi805hzkn0QLOb+sSCfIKyOTJovucQazvMhVPcUUtAyJbspbt7nF960DtolpWYlKcH1M7F5Yd9tIDv3EltqzDK5jeHMYNX1uZkYziAJDR/vx6GUQpwqW34WdmiWwe8T+S7LxFJ1KcfyfL2WNswsryTrO9z9MzcRhwS+bXOF78lIFrLN19EMysMObj+KDzvySfz9P5bUkw0xt035GmF/urKa4/CRks+X2K3X0XSk2mqeW578PfQYpPMsNS3pCVjgS0OlQNgdgBt3R79ey3spg8q7MNe5vNhTPnvWcqgKOa20/sVtlIbA/4AFE0d+fp9tjwAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;services&quot;
+        title=&quot;services&quot;
+        src=&quot;/static/51a6b916384acbdafebe45707b84bc27/c1b63/services.png&quot;
+        srcset=&quot;/static/51a6b916384acbdafebe45707b84bc27/5a46d/services.png 300w,
+/static/51a6b916384acbdafebe45707b84bc27/0a47e/services.png 600w,
+/static/51a6b916384acbdafebe45707b84bc27/c1b63/services.png 1200w&quot;
+        sizes=&quot;(max-width: 1200px) 100vw, 1200px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;&lt;/details&gt;
+&lt;!-- ============================================================== --&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;b&gt;&amp;emsp;PersistentVolumes&lt;/b&gt;&lt;/summary&gt;&lt;div style=&quot;padding-left: 30px&quot;&gt; 
+&lt;p&gt;A PersistentVolume (PV) is a piece of storage in the cluster that has been provisioned by an administrator or dynamically provisioned using Storage Classes. It is a resource in the cluster just like a node is a cluster resource. PVs are volume plugins like Volumes, but have a lifecycle independent of any individual Pod that uses the PV. This API object captures the details of the implementation of the storage, be that NFS, iSCSI, or a cloud-provider-specific storage system.&lt;/p&gt;
+&lt;p&gt;In order to be used, Persistent Volumes needs match a Persistent Volume Claim (PVC) so the space declared in the PV is claimed. This is called &lt;strong&gt;Static Provisioning&lt;/strong&gt;. When none of the statically created PV match a PVC, the cluster try to &lt;strong&gt;dynamically provision&lt;/strong&gt; a volume specially for the PVC.&lt;/p&gt;
+&lt;p&gt;The following manifests describes a persistent volume that tries to bind to a PVC. This example shows how to &lt;strong&gt;Reserve a Persistent Volume&lt;/strong&gt;, meaning that this PV will only bind to the PVC indicated in the claimRef field:&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;yaml&quot;&gt;&lt;pre class=&quot;language-yaml&quot;&gt;&lt;code class=&quot;language-yaml&quot;&gt;&lt;span class=&quot;token key atrule&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; v1
+&lt;span class=&quot;token key atrule&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; PersistentVolume
+&lt;span class=&quot;token key atrule&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; foo&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt;pv
+&lt;span class=&quot;token key atrule&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;capacity&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token key atrule&quot;&gt;storage&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; 5Gi
+  &lt;span class=&quot;token key atrule&quot;&gt;accessModes&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; ReadWriteOnce
+  &lt;span class=&quot;token key atrule&quot;&gt;storageClassName&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;&quot;&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;claimRef&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; foo&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt;pvc
+    &lt;span class=&quot;token key atrule&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; foo&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;Access Modes&lt;/strong&gt; are an important field since it defines how the volume will be accessed:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ReadWriteOnce&lt;/strong&gt;: The volume can be mounted as read-write by a single node.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;ReadOnlyMany&lt;/strong&gt;: The volume can be mounted by multiple nodes read-only.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;ReadWriteMany&lt;/strong&gt;: The volume can be mounted by multiple nodes read-write.&lt;/p&gt;
+&lt;/div&gt;&lt;/details&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- ============================================================== --&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;b&gt;&amp;emsp;PersistentVolumeClaim&lt;/b&gt;&lt;/summary&gt;&lt;div style=&quot;padding-left: 30px&quot;&gt; 
+&lt;blockquote&gt;
+&lt;p&gt;Check the Persistent Volume section above for more information about Persistent Volumes.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;A &lt;strong&gt;PersistentVolumeClaim (PVC)&lt;/strong&gt; is a request for storage by a user. It is similar to a Pod. Pods consume node resources and PVCs consume PV resources. Pods can request specific levels of resources (CPU and Memory). Claims can &lt;strong&gt;request specific size and access modes&lt;/strong&gt;, but they doesn&apos;t really need the existence of a PV matching them, since the cluster will &lt;strong&gt;dynamically provision&lt;/strong&gt; a new PV.&lt;/p&gt;
+&lt;p&gt;The following example manifest will create a PVC requesting 20Gi of storage with &lt;strong&gt;ReadWriteOnce&lt;/strong&gt; access mode, if any existing PV matches the requirements then they will be bound together, else a new PV will be dynamically provisioned.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;yaml&quot;&gt;&lt;pre class=&quot;language-yaml&quot;&gt;&lt;code class=&quot;language-yaml&quot;&gt;&lt;span class=&quot;token key atrule&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; PersistentVolumeClaim
+&lt;span class=&quot;token key atrule&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; v1
+&lt;span class=&quot;token key atrule&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; simple&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt;db
+  &lt;span class=&quot;token key atrule&quot;&gt;namespace&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; simple&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt;app
+  &lt;span class=&quot;token key atrule&quot;&gt;labels&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token key atrule&quot;&gt;app&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; simple&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt;db
+&lt;span class=&quot;token key atrule&quot;&gt;spec&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;accessModes&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt; ReadWriteOnce
+  &lt;span class=&quot;token key atrule&quot;&gt;resources&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;token key atrule&quot;&gt;requests&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;token key atrule&quot;&gt;storage&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; 20Gi&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;/div&gt;&lt;/details&gt;
+&lt;!-- ============================================================== --&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;b&gt;&amp;emsp;ConfigMaps&lt;/b&gt;&lt;/summary&gt;&lt;div style=&quot;padding-left: 30px&quot;&gt; 
+&lt;p&gt;A ConfigMap is an API object used to store non-confidential data in key-value pairs. Pods can consume ConfigMaps as environment variables, command-line arguments, or as configuration files in a volume.&lt;/p&gt;
+&lt;p&gt;A ConfigMap allows you to decouple environment-specific configuration from your container images, so that your applications are easily portable.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Caution&lt;/strong&gt;: ConfigMap does not provide secrecy or encryption. If the data you want to store are confidential, use a &lt;strong&gt;Secret&lt;/strong&gt; rather than a ConfigMap, or use additional (third party) tools to keep your data private.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;You can write a Pod spec that refers to a ConfigMap and configures the container(s) in that Pod based on the data in the ConfigMap. The Pod and the ConfigMap must be in the same namespace.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt;: The spec of a static Pod cannot refer to a ConfigMap or any other API objects.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Here&apos;s an example ConfigMap that has some keys with single values, and other keys where the value looks like a fragment of a configuration format.&lt;/p&gt;
+&lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;yaml&quot;&gt;&lt;pre class=&quot;language-yaml&quot;&gt;&lt;code class=&quot;language-yaml&quot;&gt;&lt;span class=&quot;token key atrule&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; v1
+&lt;span class=&quot;token key atrule&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; ConfigMap
+&lt;span class=&quot;token key atrule&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; game&lt;span class=&quot;token punctuation&quot;&gt;-&lt;/span&gt;demo
+&lt;span class=&quot;token key atrule&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;token comment&quot;&gt;# property-like keys; each key maps to a simple value&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;player_initial_lives&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;3&quot;&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;ui_properties_file_name&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token string&quot;&gt;&quot;user-interface.properties&quot;&lt;/span&gt;
+
+  &lt;span class=&quot;token comment&quot;&gt;# file-like keys&lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;game.properties&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;token scalar string&quot;&gt;
+    enemy.types=aliens,monsters
+    player.maximum-lives=5    &lt;/span&gt;
+  &lt;span class=&quot;token key atrule&quot;&gt;user-interface.properties&lt;/span&gt;&lt;span class=&quot;token punctuation&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;token punctuation&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;token scalar string&quot;&gt;
+    color.good=purple
+    color.bad=yellow
+    allow.textmode=true   &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;p&gt;There are four different ways that you can use a &lt;strong&gt;ConfigMap&lt;/strong&gt; to configure a container inside a Pod:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Inside a container command and args&lt;/li&gt;
+&lt;li&gt;Environment variables for a container&lt;/li&gt;
+&lt;li&gt;Add a file in read-only volume, for the application to read&lt;/li&gt;
+&lt;li&gt;Write code to run inside the Pod that uses the Kubernetes API to read a ConfigMap&lt;/li&gt;
+&lt;/ul&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; When ConfigMaps are configured as volumes mounted by pods, every key insde the config map will transform into a file in the directory where the volume is mounted.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/div&gt;&lt;/details&gt;
+&lt;!-- ============================================================== --&gt;
+&lt;details&gt;
+&lt;summary&gt;&lt;b&gt;&amp;emsp;Secrets&lt;/b&gt;&lt;/summary&gt;&lt;div style=&quot;padding-left: 30px&quot;&gt; 
+&lt;p&gt;Secrets are created the same way as configMaps, but they are used to store confidential data. Secrets don&apos;t show their data when &lt;code class=&quot;language-text&quot;&gt;kubectl get secret &amp;lt;secret&gt;&lt;/code&gt; is executed instead, they will show the codified data. Just like ConfigMaps, secrets can be configured inside a container command and args, as env variables or as files in a volume.&lt;/p&gt;
+&lt;/div&gt;&lt;/details&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Check other resources API like &lt;a href=&quot;https://projectcontour.io/docs/v1.19.1/&quot;&gt;Project Contour&lt;/a&gt; and &lt;a href=&quot;https://cert-manager.io/docs&quot;&gt;Cert-Manager&lt;/a&gt; for managing reverse proxy, web sockets and HTTP over TLS Certificates.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2&gt; Conclusion &lt;/h2&gt;
+&lt;p&gt;This is the end of this post about kubernetes, eventhough it might seem pretty long, Kubernetes is a very powerful platform that extends &lt;em&gt;reeeeeaally&lt;/em&gt; far beyond this post. Feel free to check out the &lt;a href=&quot;https://kubernetes.io/docs/home/&quot;&gt;Kubernetes documentation&lt;/a&gt; and keep learning on one of the most used technologies world wide.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Creating a simple App with NodeJS, ExpressJS and MongoDB]]></title><description><![CDATA[Steps on how to create a simple NodeJS app, connect it to a MongoDB host, expose its data through ExpressJS server and build a Docker image from it.]]></description><link>https://alesancor1.github.io/create-simple-app</link><guid isPermaLink="false">https://alesancor1.github.io/create-simple-app</guid><pubDate>Fri, 11 Feb 2022 00:00:00 GMT</pubDate><content:encoded>&lt;blockquote&gt;
 &lt;p&gt;This guide assumes you already know javascript.
 You can find all the code used throughout this guide &lt;a href=&quot;https://github.com/alesancor1/Blog-Projects/tree/main/guides/simple-app&quot;&gt;here&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -158,7 +760,7 @@ mongoose&lt;span class=&quot;token punctuation&quot;&gt;.&lt;/span&gt;&lt;span c
 &lt;p&gt;Once the Dockerfile is ready, we can build our image by running the &lt;strong&gt;docker build&lt;/strong&gt; command. We will use the &lt;strong&gt;-t&lt;/strong&gt; flag to specify the name of the image we want to build.&lt;/p&gt;
 &lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;docker build -t alesancor1/simple-app .&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;blockquote&gt;
-&lt;p&gt;If you are planning to upload the image to &lt;strong&gt;DockerHub&lt;/strong&gt;, you need to specify the tag following the &lt;username&gt;/&lt;app-name&gt; format.&lt;/p&gt;
+&lt;p&gt;If you are planning to upload the image to &lt;strong&gt;DockerHub&lt;/strong&gt;, you need to specify the tag following the username/app-name format.&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;Now the image is created and stored in our local machine, for pushing it to DockerHub, we will need to login to DockerHub. To do this, we will use the &lt;strong&gt;docker login&lt;/strong&gt; command.&lt;/p&gt;
 &lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;docker login -u &amp;lt;username&gt; --password-stdin&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
