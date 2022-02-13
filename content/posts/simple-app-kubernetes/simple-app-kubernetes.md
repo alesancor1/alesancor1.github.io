@@ -255,7 +255,7 @@ $    kubectl apply -f https://projectcontour.io/quickstart/contour.yaml
 $    kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.1.0/cert-manager.yaml
 ```
 
-> **Project Contour** provide a Load Balancer service that will be our reverse proxy. Be sure to obtain its **external IP** and configure an **A record** in your **NS server** pointing to that IP. The External IP can be obtained running `kubectl get -n projectcontour service envoy` (it takes a while to be ready).
+> **Project Contour** provide a Load Balancer service that will be our reverse proxy. Be sure to obtain its **external IP** and configure an **A record** in your **NS zone** pointing to that IP. The External IP can be obtained running `kubectl get -n projectcontour service envoy` (it takes a while to be ready).
 >
 > Be sure to apply the local services manifests when deploying to production
 
@@ -286,7 +286,7 @@ spec:
 > This issuer uses the **Let's Encrypt** ACME server, there are ways to provide locally stored certs, check the [official documentation](https://cert-manager.io/docs/concepts/issuer/) for more information.
 
 ### TLS certificates
-For TLS certificates, we will use the `cert-manager` API. We will create a certificate object which will be issued by an Issuer. The validation process (Letsencrypt Challenge) will generate a secret that will be used by **Httpproxy** to redirect the trafic over TLS.
+For TLS certificates, we will use the `cert-manager` API. We will create a certificate object which will be issued by an Issuer. The validation process (**HTTP-01 Challenge**) will generate a secret that will be used by **Httpproxy** to redirect the trafic over TLS.
 
 <details>
 <summary> <b>Show Manifest</b> </summary><div style="margin-left:20px">
