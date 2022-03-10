@@ -1,6 +1,6 @@
 ---
 title: "Creating a simple App with NodeJS, ExpressJS and MongoDB"
-path: "/create-simple-app"
+path: "/create-simple-app/"
 tags: ["Guide", "Beginner", "NodeJS", "Docker"]
 featuredImage: "./cover.png"
 excerpt: Steps on how to create a simple NodeJS app, connect it to a MongoDB host, expose its data through ExpressJS server and build a Docker image from it.

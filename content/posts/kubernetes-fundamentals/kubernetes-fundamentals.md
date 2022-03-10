@@ -1,6 +1,6 @@
 ---
 title: "Kubernetes fundamentals"
-path: "/kubernetes-fundamentals"
+path: "/kubernetes-fundamentals/"
 tags: ["Technologies", "Mid-level", "Kubernetes"]
 featuredImage: "./cover.png"
 excerpt: "A really brief introduction on the basics of Kubernetes: CLI commands, commonly used resources and basic cluster administration."

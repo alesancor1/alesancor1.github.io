@@ -1,6 +1,6 @@
 ---
 title: "Helm fundamentals: The package manager for Kubernetes"
-path: "/helm-fundamentals"
+path: "/helm-fundamentals/"
 tags: ["Technologies", "Mid-level", "Helm", "Kubernetes"]
 featuredImage: "./cover.png"
 excerpt: "Discovering the basics of Helm: Templating kubernetes manifests and deploying charts"

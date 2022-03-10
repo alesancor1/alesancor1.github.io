@@ -1,6 +1,6 @@
 ---
 title: "Deploying a simple NodeJS App in kubernetes"
-path: "/simple-app-kubernetes"
+path: "/simple-app-kubernetes/"
 tags: ["Guide", "Mid-level", "Kubernetes"]
 featuredImage: "./cover.png"
 excerpt: Steps on how to deploy simple NodeJS app, connected to a MongoDB host and exposing its endpoints through a Kubernetes service.
