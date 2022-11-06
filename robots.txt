@@ -1,4 +1,0 @@
-Sitemap: https://alesancor1.github.io/sitemap.xml
-
-User-agent: *
-Disallow:
