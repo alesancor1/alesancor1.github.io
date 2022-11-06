@@ -4,8 +4,8 @@ path: "/simple-app-helm/"
 tags: ["Guide", "Mid-level", "Helm", "Kubernetes"]
 featuredImage: "./cover.png"
 excerpt: Steps on how to create a chart for a simple NodeJS app, connected to a MongoDB host and exposing its endpoints through a Kubernetes service templated with Helm.
-created: 2022-02-13T04:12:00.000Z
-updated: 2022-02-13
+created: 2022-11-12T23:12:00.000Z
+updated: 2022-11-12
 ---
 
 <style>
